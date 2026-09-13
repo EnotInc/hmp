@@ -118,3 +118,67 @@ func (es *ExpressionStatement) String() string {
 
 	return ""
 }
+
+// -==[ Integer Literal ]==-
+type IntegerLiteral struct {
+	Token token.Token
+	Value int64
+}
+
+func (il *IntegerLiteral) expressionNode()      {}
+func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
+func (il *IntegerLiteral) String() string       { return il.Token.Literal }
+
+// -==[ Booleans ]==-
+type Boolean struct {
+	Token token.Token
+	Value bool
+}
+
+func (b *Boolean) expressionNode()      {}
+func (b *Boolean) TokenLiteral() string { return b.Token.Literal }
+func (b *Boolean) String() string       { return b.Token.Literal }
+
+// -==[ Prefix Expressions ]==-
+type PrefixExpression struct {
+	Token    token.Token // the prefix token, line ! or -
+	Operator string
+	Right    Expression
+}
+
+func (px *PrefixExpression) expressionNode()      {}
+func (px *PrefixExpression) TokenLiteral() string { return px.Token.Literal }
+func (px *PrefixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(px.Operator)
+	out.WriteString(px.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
+// -==[ Infix Expressions ]==-
+type InfixExpression struct {
+	Token    token.Token
+	Left     Expression
+	Operator string
+	Right    Expression
+}
+
+func (ix *InfixExpression) expressionNode()      {}
+func (ix *InfixExpression) TokenLiteral() string { return ix.Token.Literal }
+func (ix *InfixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(ix.Left.String())
+	out.WriteString(" ")
+	out.WriteString(ix.Operator)
+	out.WriteString(" ")
+	out.WriteString(ix.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
