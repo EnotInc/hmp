@@ -296,6 +296,7 @@ func TestOperatorPrecenseParser(t *testing.T) {
 		{"c + a * b", "(c + (a * b))"},
 		{"1 + 2 + 3;", "((1 + 2) + 3)"},
 		{"1 + 2 * 3;", "(1 + (2 * 3))"},
+		{"(1 + 2) * 3;", "((1 + 2) * 3)"},
 	}
 
 	for _, tt := range tests {
@@ -339,5 +340,27 @@ func TestBooleanExpression(t *testing.T) {
 		if boolean.Value != tt.exp {
 			t.Fatalf("want %t, but got %t", boolean.Value, tt.exp)
 		}
+	}
+}
+
+func TestIfExpression(t *testing.T) {
+	input := `if (x < y) { x } else { y }`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statement[0] is %T", program.Statements[0])
+	}
+
+	exp, ok := stmt.Expression.(*ast.IfExpression)
+	if !ok {
+		t.Fatalf("stmt.Expression is %T", stmt.Expression)
+	}
+
+	if len(exp.Consequence.Statements) != 1 {
+		t.Fatalf("len(exp.Consequence.Statements) = %d", len(exp.Consequence.Statements))
 	}
 }

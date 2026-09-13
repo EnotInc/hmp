@@ -182,3 +182,46 @@ func (ix *InfixExpression) String() string {
 
 	return out.String()
 }
+
+// -==[ if Expression ]==-
+type IfExpression struct {
+	Token       token.Token // the 'if' token
+	Condition   Expression
+	Consequence *BlockStatement
+	ALternative *BlockStatement
+}
+
+func (ie *IfExpression) expressionNode()      {}
+func (ie *IfExpression) TokenLiteral() string { return ie.Token.Literal }
+func (ie *IfExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("if")
+	out.WriteString(ie.Condition.String())
+	out.WriteString(" ")
+	out.WriteString(ie.Condition.String())
+
+	if ie.ALternative != nil {
+		out.WriteString("else")
+		out.WriteString(ie.ALternative.String())
+	}
+
+	return out.String()
+}
+
+type BlockStatement struct {
+	Token      token.Token // the '{'
+	Statements []Statement
+}
+
+func (be *BlockStatement) expressionNode()      {}
+func (be *BlockStatement) TokenLiteral() string { return be.Token.Literal }
+func (be *BlockStatement) String() string {
+	var out bytes.Buffer
+
+	for _, s := range be.Statements {
+		out.WriteString(s.String())
+	}
+
+	return out.String()
+}
