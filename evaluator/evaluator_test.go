@@ -182,11 +182,10 @@ func TestErrorHandleing(t *testing.T) {
 		{"5 + true;", "type mismatch: INTEGER + BOOLEAN"},
 		{"5 + true; 5;", "type mismatch: INTEGER + BOOLEAN"},
 		{"-true", "unknown operator: -BOOLEAN"},
-		{"if (1 == 1) { ture + fasle; }", "unknown operator: BOOLEAN + BOOLEAN"},
+		{"if (1 == 1) { true + false }", "unknown operator: BOOLEAN + BOOLEAN"},
 	}
 
 	for _, tt := range tests {
-		t.Log(tt.input)
 		evaluated := testEval(tt.input)
 		errObj, ok := evaluated.(*object.Error)
 		if !ok {
@@ -194,7 +193,6 @@ func TestErrorHandleing(t *testing.T) {
 			continue
 		}
 
-		t.Error(errObj.Message)
 		if errObj.Message != tt.expected {
 			t.Errorf("\nwant %s\ngot %s", tt.expected, errObj.Message)
 		}
