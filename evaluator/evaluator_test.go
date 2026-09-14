@@ -259,3 +259,33 @@ func TestStringLiteral(t *testing.T) {
 		t.Errorf("got %s", str.Value)
 	}
 }
+
+func TestBuilinFn(t *testing.T) {
+	tests := []struct {
+		input  string
+		expect any
+	}{
+		{`len("")`, 0},
+		{`len("four")`, 4},
+		{`len("hello world")`, 11},
+		{`len(1)`, "argument to 'len' not supported, got INTEGER"},
+		{`len("1", "2")`, "wrong number of agruments. got 2, want 1"},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		switch exp := tt.expect.(type) {
+		case int:
+			testIntergObject(t, evaluated, int64(exp))
+		case string:
+			err, ok := evaluated.(*object.Error)
+			if !ok {
+				t.Fatalf("got %T(%+v)", evaluated, evaluated)
+			}
+
+			if err.Message != exp {
+				t.Errorf("expected %q, got %q", exp, err.Message)
+			}
+		}
+	}
+}

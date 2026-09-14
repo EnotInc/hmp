@@ -10,7 +10,10 @@ import (
 
 type ObjectType string
 
+type BuildintFunction func(args ...Object) Object
+
 const (
+	BUILDID_OBJ  = "BUILDIN"
 	FUNCTION_OBJ = "FUCTION"
 	INTERER_OBJ  = "INTEGER"
 	BOOLEAN_OBJ  = "BOOLEAN"
@@ -98,3 +101,11 @@ type String struct {
 
 func (s *String) Type() ObjectType { return STRING_OBJ }
 func (s *String) Inspect() string  { return s.Value }
+
+// -==[ build id funciton ]==-
+type BuildIn struct {
+	Fn BuildintFunction
+}
+
+func (bi *BuildIn) Type() ObjectType { return BUILDID_OBJ }
+func (bi *BuildIn) Inspect() string  { return "build in function" }
