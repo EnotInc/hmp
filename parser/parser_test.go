@@ -364,3 +364,52 @@ func TestIfExpression(t *testing.T) {
 		t.Fatalf("len(exp.Consequence.Statements) = %d", len(exp.Consequence.Statements))
 	}
 }
+
+func TestFunctionLiteralParsing(t *testing.T) {
+	input := `fn(x, y) { x + y; }`
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatal(program.Statements[0])
+	}
+
+	fn, ok := stmt.Expression.(*ast.FunctionLiteral)
+	if !ok {
+		t.Fatal(stmt.Expression)
+	}
+
+	body, ok := fn.Body.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatal(fn.Body.Statements[0])
+	}
+
+	t.Log(body.String())
+}
+
+func TestCallExpressionParser(t *testing.T) {
+	input := "add(1, 2 * 3, 4 + 5)"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatal(program.Statements[0])
+	}
+
+	exp, ok := stmt.Expression.(*ast.CallExpression)
+	if !ok {
+		t.Fatal(stmt.Expression)
+	}
+
+	for _, e := range exp.Arguments {
+		t.Log(e.String())
+	}
+}
