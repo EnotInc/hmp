@@ -6,7 +6,7 @@ import (
 	"io"
 
 	"github.com/enotinc/hmp/lexer"
-	"github.com/enotinc/hmp/token"
+	"github.com/enotinc/hmp/parser"
 )
 
 const PROMTP string = " ~$ "
@@ -20,16 +20,27 @@ func Start(in io.Reader, out io.Writer) {
 	for {
 		fmt.Print(PROMTP)
 		scanned := scanner.Scan()
-
 		if !scanned {
 			return
 		}
 
 		line := scanner.Text()
 		l := lexer.New(line)
+		p := parser.New(l)
 
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Printf("%+v\n", tok)
+		program := p.ParseProgram()
+		if len(p.Errors()) != 0 {
+			printParserErrors(out, p.Errors())
+			continue
 		}
+
+		io.WriteString(out, program.String())
+		io.WriteString(out, "\n")
+	}
+}
+
+func printParserErrors(out io.Writer, errors []string) {
+	for _, err := range errors {
+		io.WriteString(out, fmt.Sprintf("\t%s\n", err))
 	}
 }
