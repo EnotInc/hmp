@@ -30,6 +30,9 @@ func TestNextToken(t *testing.T) {
 
 	"foobar"
 	"foobar"
+
+	5 <= 3
+	5 >= 3
 	`
 
 	tests := []struct {
@@ -130,6 +133,13 @@ func TestNextToken(t *testing.T) {
 
 		{token.STRING, "foobar"},
 		{token.STRING, "foobar"},
+
+		{token.INT, "5"},
+		{token.LT_EQ, "<="},
+		{token.INT, "3"},
+		{token.INT, "5"},
+		{token.GT_EQ, ">="},
+		{token.INT, "3"},
 
 		{token.EOF, ""},
 	}

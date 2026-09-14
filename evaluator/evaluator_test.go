@@ -66,15 +66,18 @@ func TestBooleanObject(t *testing.T) {
 		{"1 == 2", false},
 		{"1 != 2", true},
 		{"1 < 2 == true", true},
+		{"5 <= 3", false},
+		{"5 >= 3", true},
+		{"3 >= 3", true},
 	}
 
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
-		testBooleanObject(t, evaluated, tt.expected)
+		testBooleanObject(t, evaluated, tt.expected, tt.input)
 	}
 }
 
-func testBooleanObject(t *testing.T, obj object.Object, expected bool) bool {
+func testBooleanObject(t *testing.T, obj object.Object, expected bool, input string) bool {
 	res, ok := obj.(*object.Boolean)
 	if !ok {
 		t.Errorf("got %T (+%v)", obj, obj)
@@ -82,7 +85,7 @@ func testBooleanObject(t *testing.T, obj object.Object, expected bool) bool {
 	}
 
 	if res.Value != expected {
-		t.Errorf("want %t, got %t", res.Value, expected)
+		t.Errorf("%s: want %t, got %t", input, expected, res.Value)
 		return false
 	}
 
@@ -104,7 +107,7 @@ func TestBangOperator(t *testing.T) {
 
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
-		testBooleanObject(t, evaluated, tt.expected)
+		testBooleanObject(t, evaluated, tt.expected, tt.input)
 	}
 }
 

@@ -24,8 +24,10 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 
-	LT = "<" // Less Then
-	GT = ">" // Greater Then
+	LT    = "<"  // Less Then
+	GT    = ">"  // Greater Then
+	LT_EQ = "<=" // Less Then
+	GT_EQ = ">=" // Greater Then
 
 	EQ     = "=="
 	NOT_EQ = "!="
