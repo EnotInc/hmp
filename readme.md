@@ -1,11 +1,14 @@
-# Help Me Plese
+# Help Me Please
 
 ## About
 
 hmp is my second attempt on following the book "how to write an interpreter in go" by Thorsten Ball.
 
 ## Usage
-You can run REPL by running `hmp`, or provide a file to run code from it
+You can run REPL by running `hmp`, or provide a file to run code from it:
+```bash
+hmp example\fibonacci.hmp
+```
 
 ## Installation
 ```bash
