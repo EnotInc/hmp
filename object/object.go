@@ -15,6 +15,7 @@ const (
 	INTERER_OBJ  = "INTEGER"
 	BOOLEAN_OBJ  = "BOOLEAN"
 	NULL_OBJ     = "NULL"
+	STRING_OBJ   = "STRING"
 
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 
@@ -23,7 +24,7 @@ const (
 
 type Object interface {
 	Type() ObjectType
-	Insect() string
+	Inspect() string
 }
 
 // -==[ int ]==-
@@ -32,7 +33,7 @@ type Integer struct {
 }
 
 func (i *Integer) Type() ObjectType { return INTERER_OBJ }
-func (i *Integer) Insect() string   { return fmt.Sprintf("%d", i.Value) }
+func (i *Integer) Inspect() string  { return fmt.Sprintf("%d", i.Value) }
 
 // -==[ bool ]==-
 type Boolean struct {
@@ -40,15 +41,13 @@ type Boolean struct {
 }
 
 func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
-func (b *Boolean) Insect() string   { return fmt.Sprintf("%t", b.Value) }
+func (b *Boolean) Inspect() string  { return fmt.Sprintf("%t", b.Value) }
 
 // -==[ null ]==-
-type Null struct {
-	Value bool
-}
+type Null struct{}
 
 func (n *Null) Type() ObjectType { return NULL_OBJ }
-func (n *Null) Insect() string   { return "null" }
+func (n *Null) Inspect() string  { return "null" }
 
 // -==[ return value ]==-
 type ReturnValue struct {
@@ -56,7 +55,7 @@ type ReturnValue struct {
 }
 
 func (r *ReturnValue) Type() ObjectType { return RETURN_VALUE_OBJ }
-func (r *ReturnValue) Insect() string   { return r.Value.Insect() }
+func (r *ReturnValue) Inspect() string  { return r.Value.Inspect() }
 
 // -==[ ERRORS !]==-
 type Error struct {
@@ -64,7 +63,7 @@ type Error struct {
 }
 
 func (e *Error) Type() ObjectType { return ERROR_OBJ }
-func (e *Error) Insect() string   { return fmt.Sprintf("Error: %s", e.Message) }
+func (e *Error) Inspect() string  { return fmt.Sprintf("Error: %s", e.Message) }
 
 // -==[ function ]==-
 type Function struct {
@@ -74,7 +73,7 @@ type Function struct {
 }
 
 func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
-func (f *Function) Insect() string {
+func (f *Function) Inspect() string {
 	var out bytes.Buffer
 
 	params := []string{}
@@ -91,3 +90,11 @@ func (f *Function) Insect() string {
 
 	return out.String()
 }
+
+// -==[ string ]==-
+type String struct {
+	Value string
+}
+
+func (s *String) Type() ObjectType { return STRING_OBJ }
+func (s *String) Inspect() string  { return s.Value }

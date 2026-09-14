@@ -40,7 +40,7 @@ func Start(in io.Reader, out io.Writer) {
 		evaluated := evaluator.Eval(program, env)
 		if evaluated != nil {
 			io.WriteString(out, " ")
-			io.WriteString(out, evaluated.Insect())
+			io.WriteString(out, evaluated.Inspect())
 			io.WriteString(out, "\n")
 		}
 	}

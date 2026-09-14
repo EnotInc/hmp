@@ -413,3 +413,22 @@ func TestCallExpressionParser(t *testing.T) {
 		t.Log(e.String())
 	}
 }
+
+func TestStringLiteral(t *testing.T) {
+	input := `"hello there"`
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	stmt := program.Statements[0].(*ast.ExpressionStatement)
+	lit, ok := stmt.Expression.(*ast.StringLiteral)
+	if !ok {
+		t.Fatalf("got %T", stmt.Expression)
+	}
+
+	if lit.Value != "hello there" {
+		t.Errorf("want %s, but got %s", input, lit.Value)
+	}
+}

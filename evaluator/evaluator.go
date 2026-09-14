@@ -88,8 +88,11 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 		if isError(right) {
 			return right
 		}
-
 		return evalInfixExpression(node.Operator, left, right)
+
+	case *ast.StringLiteral:
+		return &object.String{Value: node.Value}
+
 	case *ast.BlockStatement:
 		return evalBlockStatements(node, env)
 	case *ast.IfExpression:
@@ -250,6 +253,9 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	case left.Type() == object.INTERER_OBJ && right.Type() == object.INTERER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
 
+	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
+		return evalStringInfixExpression(operator, left, right)
+
 	case operator == "==":
 		return nativeBoolToBooleanObj(left == right)
 	case operator == "!=":
@@ -261,6 +267,15 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
+}
+
+func evalStringInfixExpression(operator string, left, right object.Object) object.Object {
+	if operator != "+" {
+		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
+	}
+	l := left.(*object.String).Value
+	r := right.(*object.String).Value
+	return &object.String{Value: l + r}
 }
 
 func evalIntegerInfixExpression(operator string, left, right object.Object) object.Object {

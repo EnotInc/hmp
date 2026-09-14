@@ -181,6 +181,7 @@ func TestErrorHandleing(t *testing.T) {
 		{"-true", "unknown operator: -BOOLEAN"},
 		{"if (1 == 1) { true + false }", "unknown operator: BOOLEAN + BOOLEAN"},
 		{"foobar;", "identifier not found: foobar"},
+		{`"hello" - "there"`, "unknown operator: STRING - STRING"},
 	}
 
 	for _, tt := range tests {
@@ -243,5 +244,18 @@ func TestFunctionEval(t *testing.T) {
 
 	for _, tt := range tests {
 		testIntergObject(t, testEval(tt.input), tt.expect)
+	}
+}
+
+func TestStringLiteral(t *testing.T) {
+	input := `"Hello, there"`
+
+	evaluated := testEval(input)
+	str, ok := evaluated.(*object.String)
+	if !ok {
+		t.Fatalf("got %T(%+v)", evaluated, evaluated)
+	}
+	if str.Value != "Hello, there" {
+		t.Errorf("got %s", str.Value)
 	}
 }
