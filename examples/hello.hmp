@@ -1,0 +1,8 @@
+let greet = fn(name) {
+	return "Hello, " + name
+}
+
+let name = "Enot"
+let res = greet(name)
+
+res

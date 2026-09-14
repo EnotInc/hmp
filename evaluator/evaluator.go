@@ -166,15 +166,10 @@ func evalIdentifier(node *ast.Identifier, env *object.Enviroment) object.Object 
 	if val, ok := env.Get(node.Value); ok {
 		return val
 	}
-	// if !ok {
-	// 	return newError("identifier not found: %s", node.Value)
-	// }
-
 	if builin, ok := buildins[node.Value]; ok {
 		return builin
 	}
 
-	//return val
 	return newError("identifier not found: %s", node.Value)
 }
 
