@@ -67,11 +67,27 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 		if isError(fn) {
 			return fn
 		}
-		args := evalExpression(node.Arguments, env)
+		args := evalExpressions(node.Arguments, env)
 		if len(args) == 1 && isError(args[0]) {
 			return args[0]
 		}
 		return applyFunction(fn, args)
+	case *ast.ArrayLiteral:
+		elements := evalExpressions(node.Elements, env)
+		if len(elements) == 1 && isError(elements[0]) {
+			return elements[0]
+		}
+		return &object.Array{Elements: elements}
+	case *ast.IndexExprssion:
+		left := Eval(node.Left, env)
+		if isError(left) {
+			return left
+		}
+		index := Eval(node.Index, env)
+		if isError(index) {
+			return index
+		}
+		return evalIndexExpression(left, index)
 	case *ast.PrefixExpression:
 		right := Eval(node.Right, env)
 		if isError(right) {
@@ -133,7 +149,28 @@ func unwrapReturnvalue(obj object.Object) object.Object {
 	return obj
 }
 
-func evalExpression(exps []ast.Expression, env *object.Enviroment) []object.Object {
+func evalIndexExpression(left, index object.Object) object.Object {
+	switch {
+	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTERER_OBJ:
+		return evalArrayIdexExpression(left, index)
+	default:
+		return newError("index operator now supported: %s", left.Type())
+	}
+}
+
+func evalArrayIdexExpression(left, index object.Object) object.Object {
+	array := left.(*object.Array)
+	idx := index.(*object.Integer).Value
+	max := int64(len(array.Elements))
+
+	if idx < 0 || idx >= max {
+		return NULL
+	}
+
+	return array.Elements[idx]
+}
+
+func evalExpressions(exps []ast.Expression, env *object.Enviroment) []object.Object {
 	var res []object.Object
 	for _, e := range exps {
 		evaluated := Eval(e, env)

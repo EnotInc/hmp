@@ -434,3 +434,36 @@ func TestStringLiteral(t *testing.T) {
 		t.Errorf("want %s, but got %s", input, lit.Value)
 	}
 }
+
+func TestParsingArrayLiteral(t *testing.T) {
+	input := "[1, 2*2, 3+3]"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	stmt := program.Statements[0].(*ast.ExpressionStatement)
+	array, ok := stmt.Expression.(*ast.ArrayLiteral)
+	if !ok {
+		t.Fatalf("got %T", stmt.Expression)
+	}
+
+	t.Log(array.Elements)
+}
+
+func TestParsingIndexExpression(t *testing.T) {
+	input := "arr[1+1]"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	index, ok := stmt.Expression.(*ast.IndexExprssion)
+	if !ok {
+		t.Fatalf("got %T", stmt.Expression)
+	}
+	t.Log(index.String())
+}

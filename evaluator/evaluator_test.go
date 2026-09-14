@@ -292,3 +292,17 @@ func TestBuilinFn(t *testing.T) {
 		}
 	}
 }
+
+func TestArrayLiteral(t *testing.T) {
+	input := "[1, 2*2, 3 + 3]"
+
+	evaluated := testEval(input)
+	res, ok := evaluated.(*object.Array)
+	if !ok {
+		t.Fatalf("got %T(%+v)", evaluated, evaluated)
+	}
+
+	testIntergObject(t, res.Elements[0], 1)
+	testIntergObject(t, res.Elements[1], 4)
+	testIntergObject(t, res.Elements[2], 6)
+}
