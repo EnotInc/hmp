@@ -1,9 +1,20 @@
 # Help Me Plese
 
-hmp is a second attempt on following the book "how to write an interpreter in go" by Thorsten Ball
+## About
 
-## Sintax
+hmp is my second attempt on following the book "how to write an interpreter in go" by Thorsten Ball.
 
+## Usage
+You can run REPL by running `hmp`, or provide a file to run code from it
+
+## Installation
+```bash
+git clone https://github.com/enotinc/hmp.git
+cd hmt/cmd/hmp
+go install # or with go build
+```
+
+## Sintax Example
 ```hmp
 let age = 1;
 let message = "help me please";
@@ -19,19 +30,14 @@ let add = f(a, b) {
 	return a + b;
 };
 
-add(1, 2)
+add(1, 2) // => 3
 
 
 // fibonacci example
-let fibonacci = fn(x) {
-	if (x == 0) {
-		return 0;
-	} else {
-		if (x == 1) {
-			return 1;
-		} else {
-			fibonacci(x-1) + fibonacci(x-2);
-		}
-	}
+let fibonacci = fn(n) {
+	if (n < 2) { n }
+	else { fibonacci(n-1) + fibonacci(n-2) }
 }
+
+fibonacci(12) // => 144
 ```
