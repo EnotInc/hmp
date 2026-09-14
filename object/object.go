@@ -1,15 +1,20 @@
 package object
 
 import (
+	"bytes"
 	"fmt"
+	"strings"
+
+	"github.com/enotinc/hmp/ast"
 )
 
 type ObjectType string
 
 const (
-	INTERER_OBJ = "INTEGER"
-	BOOLEAN_OBJ = "BOOLEAN"
-	NULL_OBJ    = "NULL"
+	FUNCTION_OBJ = "FUCTION"
+	INTERER_OBJ  = "INTEGER"
+	BOOLEAN_OBJ  = "BOOLEAN"
+	NULL_OBJ     = "NULL"
 
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 
@@ -60,3 +65,29 @@ type Error struct {
 
 func (e *Error) Type() ObjectType { return ERROR_OBJ }
 func (e *Error) Insect() string   { return fmt.Sprintf("Error: %s", e.Message) }
+
+// -==[ function ]==-
+type Function struct {
+	Parameters []*ast.Identifier
+	Body       *ast.BlockStatement
+	Env        *Enviroment
+}
+
+func (f *Function) Type() ObjectType { return FUNCTION_OBJ }
+func (f *Function) Insect() string {
+	var out bytes.Buffer
+
+	params := []string{}
+	for _, p := range f.Parameters {
+		params = append(params, p.String())
+	}
+
+	out.WriteString("fn(")
+	out.WriteString(strings.Join(params, ", "))
+	out.WriteString(") { \n")
+	out.WriteString(f.Body.String())
+	out.WriteString("}")
+	out.WriteString("\n")
+
+	return out.String()
+}
