@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/enotinc/hmp/evaluator"
 	"github.com/enotinc/hmp/lexer"
 	"github.com/enotinc/hmp/parser"
 )
@@ -34,8 +35,11 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		evaluated := evaluator.Eval(program)
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Insect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 

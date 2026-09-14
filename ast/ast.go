@@ -200,7 +200,7 @@ func (ie *IfExpression) String() string {
 	out.WriteString("if")
 	out.WriteString(ie.Condition.String())
 	out.WriteString(" ")
-	out.WriteString(ie.Condition.String())
+	out.WriteString(ie.Consequence.String())
 
 	if ie.ALternative != nil {
 		out.WriteString("else")
