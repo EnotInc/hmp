@@ -4,6 +4,6 @@ let fib = fn(n) {
 	else { fib(n-1) + fib(n-2) }
 }
 
-let foo = fib(12)
+let res = fib(12)
 
-foo
+print(res)

@@ -20,10 +20,7 @@ func Run(input string, env *object.Enviroment, out io.Writer) {
 		return
 	}
 
-	evaluated := evaluator.Eval(program, env)
-	if evaluated != nil {
-		io.WriteString(out, fmt.Sprintf(" %s\n", evaluated.Inspect()))
-	}
+	evaluator.Eval(program, env)
 }
 
 func printParserErrors(out io.Writer, errors []string) {

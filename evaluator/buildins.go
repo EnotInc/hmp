@@ -1,6 +1,10 @@
 package evaluator
 
-import "github.com/enotinc/hmp/object"
+import (
+	"fmt"
+
+	"github.com/enotinc/hmp/object"
+)
 
 var buildins = map[string]*object.BuildIn{
 	"len":   {Fn: _len},
@@ -9,6 +13,7 @@ var buildins = map[string]*object.BuildIn{
 	"tail":  {Fn: _tail},
 	"push":  {Fn: _push},
 	"pop":   {Fn: _pop},
+	"print": {Fn: _print},
 }
 
 func _len(args ...object.Object) object.Object {
@@ -108,5 +113,14 @@ func _pop(args ...object.Object) object.Object {
 		copy(n, arr.Elements[:ln-1])
 		return &object.Array{Elements: n}
 	}
+	return NULL
+}
+
+func _print(args ...object.Object) object.Object {
+	for _, arg := range args {
+		fmt.Print(arg.Inspect())
+	}
+	fmt.Print("\n")
+
 	return NULL
 }

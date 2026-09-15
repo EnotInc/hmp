@@ -5,4 +5,4 @@ let greet = fn(name) {
 let name = "Enot"
 let res = greet(name)
 
-res
+print(res)
