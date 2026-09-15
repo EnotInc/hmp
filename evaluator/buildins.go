@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/enotinc/hmp/object"
 )
@@ -14,6 +15,7 @@ var buildins = map[string]*object.BuildIn{
 	"push":  {Fn: _push},
 	"pop":   {Fn: _pop},
 	"print": {Fn: _print},
+	"exit":  {Fn: _exit},
 }
 
 func _len(args ...object.Object) object.Object {
@@ -121,6 +123,15 @@ func _print(args ...object.Object) object.Object {
 		fmt.Print(arg.Inspect())
 	}
 	fmt.Print("\n")
+
+	return NULL
+}
+
+func _exit(args ...object.Object) object.Object {
+	for _, arg := range args {
+		fmt.Print(arg.Inspect())
+	}
+	os.Exit(0)
 
 	return NULL
 }

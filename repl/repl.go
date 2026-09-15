@@ -9,7 +9,12 @@ import (
 	"github.com/enotinc/hmp/runner"
 )
 
-const PROMTP string = " ~$ "
+const PROMTP string = "\033[36m ~$ \033[0m"
+const header string = `
+   █ █ █▀▀ █   █▀█   █▄▄▄█ █▀▀   █ ▄ █ █ ▀█▀ █ █ ▄
+   █▀█ █▀▀ █   █▄█   █ █ █ █▀▀   █ █ █ █  █  █▀█ ▄
+   ▀ ▀ ▀▀▀ ▀▀▀ █     ▀   ▀ ▀▀▀   ▀▀▀▀▀ ▀  ▀  ▀ ▀  *'help me please' repl
+`
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
@@ -17,6 +22,7 @@ func Start(in io.Reader, out io.Writer) {
 		panic(scanner.Err())
 	}
 
+	fmt.Print(header)
 	env := object.NewEnviroment()
 	for {
 		fmt.Print(PROMTP)
