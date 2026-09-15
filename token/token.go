@@ -24,6 +24,9 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 
+	INCREMENT = "++"
+	DECREMENT = "--"
+
 	LT    = "<"  // Less Then
 	GT    = ">"  // Greater Then
 	LT_EQ = "<=" // Less Then

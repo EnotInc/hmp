@@ -14,6 +14,7 @@ const header string = `
    █ █ █▀▀ █   █▀█   █▄▄▄█ █▀▀   █ ▄ █ █ ▀█▀ █ █ ▄
    █▀█ █▀▀ █   █▄█   █ █ █ █▀▀   █ █ █ █  █  █▀█ ▄
    ▀ ▀ ▀▀▀ ▀▀▀ █     ▀   ▀ ▀▀▀   ▀▀▀▀▀ ▀  ▀  ▀ ▀  *'help me please' repl
+
 `
 
 func Start(in io.Reader, out io.Writer) {

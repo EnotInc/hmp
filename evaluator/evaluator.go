@@ -107,7 +107,12 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 			return right
 		}
 		return evalInfixExpression(node.Operator, left, right)
-
+	case *ast.PostfixExpression:
+		left := Eval(node.Left, env)
+		if isError(left) {
+			return left
+		}
+		return evalPostfixExpression(node.Operator, left)
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}
 
@@ -297,6 +302,23 @@ func evalBlockStatements(block *ast.BlockStatement, env *object.Enviroment) obje
 	}
 
 	return result
+}
+
+func evalPostfixExpression(operator string, left object.Object) object.Object {
+	l, ok := left.(*object.Integer)
+	if !ok {
+		return newError("Incorrect operator %s for %s. Could be ony used wtih INTEGERS", operator, left.Type())
+	}
+	switch operator {
+	case "++":
+		increment := l.Value + 1
+		return &object.Integer{Value: increment}
+	case "--":
+		decrement := l.Value - 1
+		return &object.Integer{Value: decrement}
+	default:
+		return newError("unknown operator: %s%s", operator, left.Type())
+	}
 }
 
 func evalPrefixExpression(operator string, right object.Object) object.Object {

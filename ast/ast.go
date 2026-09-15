@@ -161,6 +161,26 @@ func (px *PrefixExpression) String() string {
 	return out.String()
 }
 
+// -==[ Postfix Expressions ]==-
+type PostfixExpression struct {
+	Token    token.Token // the prefix token, line ! or -
+	Operator string
+	Left     Expression
+}
+
+func (px *PostfixExpression) expressionNode()      {}
+func (px *PostfixExpression) TokenLiteral() string { return px.Token.Literal }
+func (px *PostfixExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("(")
+	out.WriteString(px.Left.String())
+	out.WriteString(px.Operator)
+	out.WriteString(")")
+
+	return out.String()
+}
+
 // -==[ Infix Expressions ]==-
 type InfixExpression struct {
 	Token    token.Token
