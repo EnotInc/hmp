@@ -1,6 +1,10 @@
 package lexer
 
-import "github.com/enotinc/hmp/token"
+import (
+	"strings"
+
+	"github.com/enotinc/hmp/token"
+)
 
 type Lexer struct {
 	input        string
@@ -152,14 +156,41 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 }
 
 func (l *Lexer) readString() string {
-	pos := l.position + 1
+	var out strings.Builder
 	for {
 		l.readChar()
 		if l.ch == '"' || l.ch == 0 {
 			break
 		}
+
+		if l.ch != '\\' {
+			out.WriteByte(l.ch)
+		} else {
+			l.readChar()
+			switch l.ch {
+			case 'n':
+				out.WriteByte('\n')
+			case 't':
+				out.WriteByte('\t')
+			case 'r':
+				out.WriteByte('\r')
+			case 'b':
+				out.WriteByte('\b')
+			case 'a':
+				out.WriteByte('\a') // bell
+			case 'f':
+				out.WriteByte('\f') // form feed, what ever this is
+			case 'v':
+				out.WriteByte('\v')
+			case 'e':
+				out.WriteByte('\033')
+			default:
+				out.WriteByte('\\')
+				out.WriteByte(l.ch)
+			}
+		}
 	}
-	return l.input[pos:l.position]
+	return out.String()
 }
 
 func (l *Lexer) readIdent() string {

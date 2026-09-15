@@ -44,3 +44,7 @@ let fibonacci = fn(n) {
 
 fibonacci(12) // => 144
 ```
+
+> [!warning]
+> buildin `print()` supports only alphabetic escape sequences (`\n`, `\t`, `\e` etc.)
+> other sequences will be treated as separate bytes (`\033` = `{'\', '0', '3', '3'}`)
