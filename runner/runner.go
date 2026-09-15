@@ -20,7 +20,10 @@ func Run(input string, env *object.Enviroment, out io.Writer) {
 		return
 	}
 
-	evaluator.Eval(program, env)
+	evaluated := evaluator.Eval(program, env)
+	if evaluated != nil && evaluated.Type() == object.ERROR_OBJ {
+		io.WriteString(out, evaluated.Inspect())
+	}
 }
 
 func printParserErrors(out io.Writer, errors []string) {
