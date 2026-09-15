@@ -31,7 +31,7 @@ func TestNextToken(t *testing.T) {
 	"foobar"
 	"foobar"
 
-	5 <= 3
+	5 <= 3 // foo bar baz
 	5 >= 3
 
 	[1, 2];

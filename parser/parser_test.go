@@ -346,7 +346,9 @@ func TestBooleanExpression(t *testing.T) {
 }
 
 func TestIfExpression(t *testing.T) {
-	input := `if (x < y) { x } else { y }`
+	input := `if (x < y) { x }
+	//  test of comments
+	else { y }`
 	l := lexer.New(input)
 	p := New(l)
 	program := p.ParseProgram()
