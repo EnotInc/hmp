@@ -30,7 +30,10 @@ func (e *Enviroment) Get(name string) (Object, bool) {
 
 func (e *Enviroment) Assign(name string, val Object) Object {
 	if _, ok := e.store[name]; !ok {
-		return &Error{Message: fmt.Sprintf("can't assing to not existed variable '%s'", name)}
+		if e.outer != nil {
+			return e.outer.Assign(name, val)
+		}
+		return &Error{Message: fmt.Sprintf("can't assing to not existed variable '%s: %T'", name, val)}
 	}
 	return e.Set(name, val)
 }
