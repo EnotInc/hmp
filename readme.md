@@ -20,8 +20,13 @@ go install # or with go build
 ## Sintax Example
 ```hmp
 let age = 1;
+age = 2;
 let message = "help me please";
 let res = 10 * (20/2);
+
+const foo = ture;
+foo = false; // => error
+
 
 let arr = [1, 2, 3, 4];
 let strc = {"name": "foo", "age": 21};
@@ -43,6 +48,13 @@ let fibonacci = fn(n) {
 }
 
 fibonacci(12) // => 144
+
+let count := 10;
+for (count > 0) {
+	print(count);
+	count--;
+}
+
 ```
 
 > [!warning]

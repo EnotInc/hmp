@@ -417,3 +417,36 @@ func (a *AssignExpression) String() string {
 
 	return out.String()
 }
+
+type ForStatement struct {
+	Token     token.Token
+	Condition Expression
+	Body      *BlockStatement
+}
+
+func (f *ForStatement) statementNode()       {}
+func (f *ForStatement) TokenLiteral() string { return f.Token.Literal }
+func (f *ForStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("for (")
+	out.WriteString(f.Condition.String())
+	out.WriteString(") {")
+
+	for _, stmt := range f.Body.Statements {
+		out.WriteString(stmt.String())
+	}
+
+	out.WriteString("}")
+
+	return out.String()
+}
+
+type BreakStamement struct {
+	Token token.Token
+}
+
+// TODO: implement
+func (b *BreakStamement) statementNode()       {}
+func (b *BreakStamement) TokenLiteral() string { return b.Token.Literal }
+func (b *BreakStamement) String() string       { return b.Token.Literal }

@@ -306,3 +306,10 @@ func TestArrayLiteral(t *testing.T) {
 	testIntergObject(t, res.Elements[1], 4)
 	testIntergObject(t, res.Elements[2], 6)
 }
+
+func TestForStatement(t *testing.T) {
+	input := "let a = 1; for (a != 0) { a--; }"
+
+	evaluated := testEval(input)
+	t.Log(evaluated.Inspect())
+}

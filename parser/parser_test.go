@@ -499,3 +499,16 @@ func TestParsingAssignment(t *testing.T) {
 		t.Log(stmt.String())
 	}
 }
+
+func TestForStatement(t *testing.T) {
+	input := "for (1 < 2) { 2; }"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	for _, stmt := range program.Statements {
+		t.Log(stmt.String())
+	}
+}

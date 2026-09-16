@@ -125,6 +125,8 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}
 
+	case *ast.ForStatement:
+		return evalForStatement(node, env)
 	case *ast.BlockStatement:
 		return evalBlockStatements(node, env)
 	case *ast.IfExpression:
@@ -132,6 +134,31 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 	}
 
 	return nil
+}
+
+func evalForStatement(node *ast.ForStatement, env *object.Enviroment) object.Object {
+	switch node.Condition.(type) {
+	case *ast.InfixExpression, *ast.Boolean, *ast.Identifier:
+		loopEnv := object.NewEnclosedEnviroment(env)
+
+		for {
+			cond := Eval(node.Condition, loopEnv)
+			if isError(cond) {
+				return cond
+			}
+			if !isTruthy(cond) {
+				return NULL
+			}
+
+			body := evalBlockStatements(node.Body, loopEnv)
+			if isError(body) {
+				return body
+			}
+		}
+	default:
+		return NULL
+	}
+
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
@@ -269,7 +296,10 @@ func evalAssignExpression(node *ast.AssignExpression, env *object.Enviroment) ob
 			return newError("unable to reassign constants")
 		}
 
-		env.Set(left.Value, val)
+		err := env.Assign(left.Value, val)
+		if isError(err) {
+			return err
+		}
 		return val
 
 	case *ast.IndexExprssion:
@@ -291,7 +321,10 @@ func evalAssignExpression(node *ast.AssignExpression, env *object.Enviroment) ob
 		if isError(res) {
 			return res
 		}
-		env.Set(left.Left.String(), res)
+		err := env.Assign(left.Left.String(), res)
+		if isError(err) {
+			return err
+		}
 		return res
 
 	default:
@@ -398,11 +431,11 @@ func evalPostfixExpression(operator string, left object.Object) object.Object {
 	}
 	switch operator {
 	case "++":
-		increment := l.Value + 1
-		return &object.Integer{Value: increment}
+		l.Value = l.Value + 1
+		return l
 	case "--":
-		decrement := l.Value - 1
-		return &object.Integer{Value: decrement}
+		l.Value = l.Value - 1
+		return l
 	default:
 		return newError("unknown operator: %s%s", operator, left.Type())
 	}

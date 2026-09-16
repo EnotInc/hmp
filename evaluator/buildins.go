@@ -78,7 +78,7 @@ func _tail(args ...object.Object) object.Object {
 		return newError("wrong number of agruments. got %d, want 1", len(args))
 	}
 	if args[0].Type() != object.ARRAY_OBJ {
-		return newError("argument to 'first' must be ARRAY, got %s", args[0].Type())
+		return newError("argument to 'tail' must be ARRAY, got %s", args[0].Type())
 	}
 
 	arr := args[0].(*object.Array)
@@ -96,7 +96,7 @@ func _push(args ...object.Object) object.Object {
 		return newError("wrong number of agruments. got %d, want 2", len(args))
 	}
 	if args[0].Type() != object.ARRAY_OBJ {
-		return newError("argument to 'first' must be ARRAY, got %s", args[0].Type())
+		return newError("argument to 'push' must be ARRAY, got %s", args[0].Type())
 	}
 
 	arr := args[0].(*object.Array)
@@ -114,7 +114,7 @@ func _pop(args ...object.Object) object.Object {
 		return newError("wrong number of agruments. got %d, want 1", len(args))
 	}
 	if args[0].Type() != object.ARRAY_OBJ {
-		return newError("argument to 'first' must be ARRAY, got %s", args[0].Type())
+		return newError("argument to 'pop' must be ARRAY, got %s", args[0].Type())
 	}
 
 	arr := args[0].(*object.Array)

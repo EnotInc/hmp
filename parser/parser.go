@@ -189,9 +189,40 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseConstStatement()
 	case token.RETURN:
 		return p.parseReturnStatement()
+	case token.FOR:
+		return p.parseForStatement()
+	case token.BREAK:
+		return &ast.BreakStamement{Token: p.curToken}
 	default:
 		return p.parseExpressionStatement()
 	}
+}
+
+func (p *Parser) parseForStatement() *ast.ForStatement {
+	stmt := &ast.ForStatement{Token: p.curToken}
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	p.nextToken()
+	cond := p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
+	body := p.parseBlockStatement()
+	if !p.curTokenIs(token.RBRACE) {
+		return nil
+	}
+
+	stmt.Condition = cond
+	stmt.Body = body
+
+	return stmt
 }
 
 func (p *Parser) parseLetStatement() *ast.LetStatement {
