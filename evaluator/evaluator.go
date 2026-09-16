@@ -187,7 +187,7 @@ func extendedFunctionEnv(fn *object.Function, args []object.Object) *object.Envi
 
 func unwrapReturnvalue(obj object.Object) object.Object {
 	if returnValue, ok := obj.(*object.ReturnValue); ok {
-		return returnValue
+		return returnValue.Value
 	}
 
 	return obj
@@ -199,6 +199,10 @@ func evalIndexExpression(left, index object.Object) object.Object {
 		return evalArrayIdexExpression(left, index)
 	case left.Type() == object.HASH_OBJ:
 		return evalHashIndexExpression(left, index)
+	case left.Type() == object.STRING_OBJ && index.Type() == object.INTERER_OBJ:
+		str := left.(*object.String)
+		idx := index.(*object.Integer)
+		return &object.String{Value: string(str.Value[idx.Value])}
 	default:
 		return newError("index operator not supported: %s", left.Type())
 	}
