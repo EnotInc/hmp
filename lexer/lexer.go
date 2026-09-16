@@ -133,6 +133,20 @@ func (l *Lexer) NextToken() token.Token {
 		tok.Type = token.STRING
 		tok.Literal = l.readString()
 
+	case '&', '|':
+		if l.peekChar() == l.ch {
+			l.readChar()
+			tok.Literal = string(l.ch) + string(l.ch)
+			switch l.ch {
+			case '&':
+				tok.Type = token.AND
+			case '|':
+				tok.Type = token.OR
+			}
+		} else {
+			tok = newToken(token.ILLEGAL, l.ch)
+		}
+
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF

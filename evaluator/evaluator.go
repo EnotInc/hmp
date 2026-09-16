@@ -449,6 +449,18 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
 		return evalStringInfixExpression(operator, left, right)
 
+	case operator == "&&":
+		if left.Type() == right.Type() && left.Type() == object.BOOLEAN_OBJ {
+			left := left.(*object.Boolean).Value
+			right := right.(*object.Boolean).Value
+			return nativeBoolToBooleanObj(left && right)
+		}
+	case operator == "||":
+		if left.Type() == right.Type() && left.Type() == object.BOOLEAN_OBJ {
+			left := left.(*object.Boolean).Value
+			right := right.(*object.Boolean).Value
+			return nativeBoolToBooleanObj(left || right)
+		}
 	case operator == "==":
 		return nativeBoolToBooleanObj(left == right)
 	case operator == "!=":
@@ -460,6 +472,7 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}
+	return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 }
 
 func evalStringInfixExpression(operator string, left, right object.Object) object.Object {

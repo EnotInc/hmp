@@ -37,6 +37,9 @@ func TestNextToken(t *testing.T) {
 	[1, 2];
 
 	const a = 5;
+
+	a && b
+	a || b
 	`
 
 	tests := []struct {
@@ -157,6 +160,13 @@ func TestNextToken(t *testing.T) {
 		{token.ASSIGN, "="},
 		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
+
+		{token.IDENT, "a"},
+		{token.AND, "&&"},
+		{token.IDENT, "b"},
+		{token.IDENT, "a"},
+		{token.OR, "||"},
+		{token.IDENT, "b"},
 
 		{token.EOF, ""},
 	}
