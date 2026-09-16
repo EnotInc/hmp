@@ -13,9 +13,9 @@ const (
 	_ int = iota
 	LOWEST
 	ASSIGN // a = 5;
-	EQUALS // ==
 	OR
 	AND
+	EQUALS      // ==
 	LESSGREATER // > or <
 	SUM         // +
 	PRODUCT     // *

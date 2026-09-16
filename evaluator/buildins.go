@@ -3,12 +3,14 @@ package evaluator
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/enotinc/hmp/object"
 )
 
 var buildins = map[string]*object.BuildIn{
-	"len": {Fn: _len},
+	"atoi": {Fn: _atoi},
+	"len":  {Fn: _len},
 
 	"first": {Fn: _first},
 	"last":  {Fn: _last},
@@ -255,6 +257,9 @@ func _delete(args ...object.Object) object.Object {
 }
 
 func _args(args ...object.Object) object.Object {
+	if len(args) != 0 {
+		return newError("args() fn does not accept any args, got %d", len(args))
+	}
 	as := &object.Array{}
 	osa := os.Args
 	if len(osa) < 2 {
@@ -267,4 +272,19 @@ func _args(args ...object.Object) object.Object {
 		as.Elements = append(as.Elements, &object.String{Value: a})
 	}
 	return as
+}
+
+func _atoi(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return newError("wrong number of agruments. got %d, want 1", len(args))
+	}
+	integ, ok := args[0].(*object.String)
+	if !ok {
+		return newError("argument to 'atoi' must be STRING, got %s", args[0].Type())
+	}
+	n, err := strconv.Atoi(integ.Value)
+	if err != nil {
+		return newError("unable to parce string %s", integ.Value)
+	}
+	return &object.Integer{Value: int64(n)}
 }

@@ -1,0 +1,79 @@
+const filename = "todos.md"
+
+let tasks = []
+
+let init = fn() {
+	if (!exists(filename)) {
+		create(filename)
+	}
+
+	const data = read(filename)
+	_parse(data);
+}
+
+let _parse = fn(data) {
+	let i = 0
+	let line = ""
+	for (i < len(data)) {
+		let ch = data[i]
+		if (ch == ";") {
+			tasks = push(tasks, line)
+			line = ""
+		} else {
+			line = line + ch
+		}
+		i = i+1
+	}
+}
+
+let _save = fn() {
+	let output = ""
+	let i = 0
+	for (i < len(tasks)) {
+		const data = tasks[i]
+		if (len(data) != 0) {
+			output = output + data + ";"
+		}
+		i = i+1
+	}
+
+	write(filename, output)
+}
+
+let list = fn() {
+	const reset = "\e[0m"
+	const yellow = "\e[33m"
+	const cyan = "\e[34m"
+
+	let i = 0
+	for (i < len(tasks)) {
+		print(yellow, i, " ", cyan, tasks[i], reset)
+		i++
+	}
+}
+
+let main = fn() {
+	const input = args()
+	if (len(input) == 1 ) {
+		list()
+	}
+	if (len(input)==3) {
+		const cmd = input[1]
+		const param = input[2]
+		if (cmd == "new") {
+			tasks = push(tasks, param)
+		}
+		if (cmd == "remove" || cmd == "complete") {
+			const n = atoi(param)
+			if (n<0 || n>=len(tasks)) {
+				print("incorrect index ", n)
+			} else {
+				tasks[n] = ""
+			}
+		}
+	}
+}
+
+init()
+main()
+_save()
