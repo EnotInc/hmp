@@ -69,7 +69,7 @@ type Error struct {
 }
 
 func (e *Error) Type() ObjectType { return ERROR_OBJ }
-func (e *Error) Inspect() string  { return fmt.Sprintf("Error: %s", e.Message) }
+func (e *Error) Inspect() string  { return fmt.Sprintf("\tError: %s\n", e.Message) }
 
 // -==[ function ]==-
 type Function struct {

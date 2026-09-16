@@ -469,3 +469,16 @@ func TestParsingIndexExpression(t *testing.T) {
 	}
 	t.Log(index.String())
 }
+
+func TestParsingAssignment(t *testing.T) {
+	input := "let a = 4; a = 5;"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	for _, stmt := range program.Statements {
+		t.Log(stmt.String())
+	}
+}

@@ -375,3 +375,22 @@ func (h *HashLiteral) String() string {
 
 	return out.String()
 }
+
+// -==[ assignment ]==-
+type AssignExpression struct {
+	Token token.Token
+	Name  Expression
+	Right Expression
+}
+
+func (a *AssignExpression) expressionNode()      {}
+func (a *AssignExpression) TokenLiteral() string { return a.Token.Literal }
+func (a *AssignExpression) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(a.Name.String())
+	out.WriteString("=")
+	out.WriteString(a.Right.String())
+
+	return out.String()
+}

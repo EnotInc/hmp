@@ -55,6 +55,8 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 		params := node.Parameters
 		body := node.Body
 		return &object.Function{Parameters: params, Body: body, Env: env}
+	case *ast.AssignExpression:
+		return evalAssignExpression(node, env)
 
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
@@ -246,6 +248,76 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Enviroment) object.Objec
 		pairs[hashed] = object.HashPair{Key: key, Value: value}
 	}
 	return &object.Hash{Pairs: pairs}
+}
+
+func evalAssignExpression(node *ast.AssignExpression, env *object.Enviroment) object.Object {
+	val := Eval(node.Right, env)
+	if isError(val) {
+		return val
+	}
+
+	switch left := node.Name.(type) {
+	case *ast.Identifier:
+		env.Set(left.Value, val)
+		return val
+
+	case *ast.IndexExprssion:
+		l := Eval(left.Left, env)
+		if isError(l) {
+			return l
+		}
+
+		index := Eval(left.Index, env)
+		if isError(index) {
+			return index
+		}
+
+		res := evalIdexAssignment(l, index, val)
+		if isError(res) {
+			return res
+		}
+		env.Set(left.Left.String(), res)
+		return res
+
+	default:
+		return newError("assign operator is not available to %T", node.Name)
+	}
+}
+
+func evalIdexAssignment(left object.Object, index object.Object, val object.Object) object.Object {
+	switch left.Type() {
+	case object.ARRAY_OBJ:
+		arr := left.(*object.Array)
+		idx, ok := index.(*object.Integer)
+		if !ok {
+			return newError("icorrect idnex: %T", index)
+		}
+		max := int64(len(arr.Elements))
+		if idx.Value < 0 || idx.Value > max {
+			return newError("index %d out of bounds", idx)
+		}
+
+		arr.Elements[idx.Value] = val
+		return arr
+	case object.HASH_OBJ:
+		hash := left.(*object.Hash)
+		key, ok := index.(object.Hashable)
+		if !ok {
+			return newError("unusable as hash key: %s", index.Type())
+		}
+
+		v, ok := hash.Pairs[key.HashKey()]
+		if !ok {
+			return newError("key '%s' not found in hash map", index.Inspect())
+		}
+
+		v.Value = val
+		hash.Pairs[key.HashKey()] = v
+
+		return hash
+	default:
+		return newError("incorrect assignment object %T", left)
+	}
 }
 
 func evalIdentifier(node *ast.Identifier, env *object.Enviroment) object.Object {
