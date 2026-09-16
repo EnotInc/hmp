@@ -191,8 +191,6 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseReturnStatement()
 	case token.FOR:
 		return p.parseForStatement()
-	case token.BREAK:
-		return &ast.BreakStamement{Token: p.curToken}
 	default:
 		return p.parseExpressionStatement()
 	}
@@ -200,16 +198,17 @@ func (p *Parser) parseStatement() ast.Statement {
 
 func (p *Parser) parseForStatement() *ast.ForStatement {
 	stmt := &ast.ForStatement{Token: p.curToken}
-	if !p.expectPeek(token.LPAREN) {
-		return nil
+
+	var cond ast.Expression = &ast.Boolean{Value: true} // setting condition to be true by default (for {} = while true)
+	if p.peekTokenIs(token.LPAREN) {                    // if we found condition - parse it. (for (cond) {} = while cond )
+		p.nextToken()
+		cond = p.parseExpression(LOWEST)
+
+		if !p.curTokenIs(token.RPAREN) {
+			return nil
+		}
 	}
 
-	p.nextToken()
-	cond := p.parseExpression(LOWEST)
-
-	if !p.expectPeek(token.RPAREN) {
-		return nil
-	}
 	if !p.expectPeek(token.LBRACE) {
 		return nil
 	}
@@ -217,6 +216,10 @@ func (p *Parser) parseForStatement() *ast.ForStatement {
 	body := p.parseBlockStatement()
 	if !p.curTokenIs(token.RBRACE) {
 		return nil
+	}
+
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.nextToken()
 	}
 
 	stmt.Condition = cond

@@ -441,12 +441,3 @@ func (f *ForStatement) String() string {
 
 	return out.String()
 }
-
-type BreakStamement struct {
-	Token token.Token
-}
-
-// TODO: implement
-func (b *BreakStamement) statementNode()       {}
-func (b *BreakStamement) TokenLiteral() string { return b.Token.Literal }
-func (b *BreakStamement) String() string       { return b.Token.Literal }

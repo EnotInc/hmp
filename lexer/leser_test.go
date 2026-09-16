@@ -41,7 +41,7 @@ func TestNextToken(t *testing.T) {
 	a && b
 	a || b
 
-	for {} break
+	for {}
 	`
 
 	tests := []struct {
@@ -173,7 +173,6 @@ func TestNextToken(t *testing.T) {
 		{token.FOR, "for"},
 		{token.LBRACE, "{"},
 		{token.RBRACE, "}"},
-		{token.BREAK, "break"},
 
 		{token.EOF, ""},
 	}

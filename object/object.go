@@ -22,7 +22,6 @@ const (
 	STRING_OBJ   = "STRING"
 	ARRAY_OBJ    = "ARRAY"
 	HASH_OBJ     = "HASH"
-	BREAK_OBJ    = "BREAK"
 
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 
@@ -190,9 +189,3 @@ func (h *Hash) Inspect() string {
 
 	return out.String()
 }
-
-// -==[ break ]==-
-type Break struct{}
-
-func (n *Break) Type() ObjectType { return BREAK_OBJ }
-func (n *Break) Inspect() string  { return "null" }

@@ -146,6 +146,7 @@ func evalForStatement(node *ast.ForStatement, env *object.Enviroment) object.Obj
 			if isError(cond) {
 				return cond
 			}
+
 			if !isTruthy(cond) {
 				return NULL
 			}
