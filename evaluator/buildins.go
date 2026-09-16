@@ -25,6 +25,8 @@ var buildins = map[string]*object.BuildIn{
 	"write":  {Fn: _write},
 	"delete": {Fn: _delete},
 	"rename": {Fn: _rename},
+
+	"args": {Fn: _args},
 }
 
 func _len(args ...object.Object) object.Object {
@@ -250,4 +252,19 @@ func _delete(args ...object.Object) object.Object {
 	}
 
 	return NULL
+}
+
+func _args(args ...object.Object) object.Object {
+	as := &object.Array{}
+	osa := os.Args
+	if len(osa) < 2 {
+		return newError("arguments wasn't provided")
+	}
+	for i, a := range osa {
+		if i == 0 { // skipping the 'hmp' call
+			continue
+		}
+		as.Elements = append(as.Elements, &object.String{Value: a})
+	}
+	return as
 }

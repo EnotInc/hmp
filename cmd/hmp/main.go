@@ -28,8 +28,8 @@ func main() {
 const hmp_ext = ".hmp"
 
 func readFrom(args []string) (string, error) {
-	if len(args) != 2 {
-		return "", fmt.Errorf("To many arguments")
+	if len(args) < 2 {
+		return "", fmt.Errorf("file is not provided")
 	}
 
 	file := args[1]
