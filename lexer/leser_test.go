@@ -35,6 +35,8 @@ func TestNextToken(t *testing.T) {
 	5 >= 3
 
 	[1, 2];
+
+	const a = 5;
 	`
 
 	tests := []struct {
@@ -148,6 +150,12 @@ func TestNextToken(t *testing.T) {
 		{token.COMMA, ","},
 		{token.INT, "2"},
 		{token.RBRACKET, "]"},
+		{token.SEMICOLON, ";"},
+
+		{token.CONST, "const"},
+		{token.IDENT, "a"},
+		{token.ASSIGN, "="},
+		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
 
 		{token.EOF, ""},

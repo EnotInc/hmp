@@ -51,6 +51,13 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 			return val
 		}
 		env.Set(node.Name.Value, val)
+	case *ast.ConstStatement:
+		val := Eval(node.Value, env)
+		if isError(val) {
+			return val
+		}
+		env.Set(node.Name.Value, val)
+		env.Const(node.Name.Value)
 	case *ast.FunctionLiteral:
 		params := node.Parameters
 		body := node.Body
@@ -258,6 +265,10 @@ func evalAssignExpression(node *ast.AssignExpression, env *object.Enviroment) ob
 
 	switch left := node.Name.(type) {
 	case *ast.Identifier:
+		if env.IsConst(left.Value) {
+			return newError("unable to reassign constants")
+		}
+
 		env.Set(left.Value, val)
 		return val
 
@@ -265,6 +276,10 @@ func evalAssignExpression(node *ast.AssignExpression, env *object.Enviroment) ob
 		l := Eval(left.Left, env)
 		if isError(l) {
 			return l
+		}
+
+		if env.IsConst(left.Left.String()) {
+			return newError("unable to reassign constants")
 		}
 
 		index := Eval(left.Index, env)

@@ -8,6 +8,22 @@ import (
 	"github.com/enotinc/hmp/lexer"
 )
 
+func TestConstStatement(t *testing.T) {
+	input := "const a = r;"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	stmt, ok := program.Statements[0].(*ast.ConstStatement)
+	if !ok {
+		t.Fatalf("got %T(%+v)", program.Statements[0], program.Statements[0])
+	}
+	t.Log(stmt.Token)
+	t.Log(stmt.Name)
+	t.Log(stmt.Value)
+}
+
 func TestLetStatement(t *testing.T) {
 	input := `
 	let x = 5;
