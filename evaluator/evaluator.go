@@ -357,7 +357,8 @@ func evalIdexAssignment(left object.Object, index object.Object, val object.Obje
 
 		v, ok := hash.Pairs[key.HashKey()]
 		if !ok {
-			return newError("key '%s' not found in hash map", index.Inspect())
+			hash.Pairs[key.HashKey()] = object.HashPair{Key: index, Value: val}
+			return hash
 		}
 
 		v.Value = val
