@@ -1,0 +1,25 @@
+let val = rand(0, 100);
+
+let guess = fn(x) {
+	if (x == val) {
+		return "you guessed it!"
+	} else {
+		if (x < val) {
+			return "value is greater"
+		} else {
+			return "value is less"
+		}
+	}
+}
+
+let input = ""
+let n = -1
+print("Let's guess some values! Range is: 0 - 100")
+print("type your first number: ")
+for (n != val) {
+	input = scanln()
+	n = atoi(input)
+
+	const res = guess(n)
+	print(res)
+}

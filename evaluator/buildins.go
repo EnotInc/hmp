@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"fmt"
+	"math/rand/v2"
 	"os"
 	"strconv"
 
@@ -18,8 +19,11 @@ var buildins = map[string]*object.BuildIn{
 	"push":  {Fn: _push},
 	"pop":   {Fn: _pop},
 
-	"print": {Fn: _print},
-	"exit":  {Fn: _exit},
+	"rand": {Fn: _rand},
+
+	"scanln": {Fn: _scanln},
+	"print":  {Fn: _print},
+	"exit":   {Fn: _exit},
 
 	"exists": {Fn: _exists},
 	"create": {Fn: _create},
@@ -129,6 +133,20 @@ func _pop(args ...object.Object) object.Object {
 		return &object.Array{Elements: n}
 	}
 	return NULL
+}
+
+func _scanln(args ...object.Object) object.Object {
+	if len(args) != 0 {
+		return newError("scanln fn does not accept any args, got %d", len(args))
+	}
+
+	var input string
+	_, err := fmt.Scanln(&input)
+	if err != nil {
+		return newError("unable to scan input, %s", err)
+	}
+
+	return &object.String{Value: input}
 }
 
 func _print(args ...object.Object) object.Object {
@@ -258,7 +276,7 @@ func _delete(args ...object.Object) object.Object {
 
 func _args(args ...object.Object) object.Object {
 	if len(args) != 0 {
-		return newError("args() fn does not accept any args, got %d", len(args))
+		return newError("args fn does not accept any args, got %d", len(args))
 	}
 	as := &object.Array{}
 	osa := os.Args
@@ -287,4 +305,18 @@ func _atoi(args ...object.Object) object.Object {
 		return newError("unable to parse string %s", integ.Value)
 	}
 	return &object.Integer{Value: int64(n)}
+}
+
+func _rand(args ...object.Object) object.Object {
+	if len(args) != 2 {
+		return newError("wrong number of agruments. got %d, want 2", len(args))
+	}
+	if args[0].Type() != object.INTERER_OBJ || args[1].Type() != object.INTERER_OBJ {
+		return newError("both argument to 'rand' must be INTEGER, got %s", args[0].Type())
+	}
+	min := args[0].(*object.Integer).Value
+	max := args[1].(*object.Integer).Value
+
+	res := rand.Int64N(max-min) + min
+	return &object.Integer{Value: res}
 }
