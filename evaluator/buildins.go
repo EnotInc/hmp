@@ -284,7 +284,7 @@ func _atoi(args ...object.Object) object.Object {
 	}
 	n, err := strconv.Atoi(integ.Value)
 	if err != nil {
-		return newError("unable to parce string %s", integ.Value)
+		return newError("unable to parse string %s", integ.Value)
 	}
 	return &object.Integer{Value: int64(n)}
 }

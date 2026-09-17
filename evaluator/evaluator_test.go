@@ -219,7 +219,7 @@ func TestLetStatementEval(t *testing.T) {
 }
 
 func TestFunctionObjet(t *testing.T) {
-	input := "fn(x) {x + 2; };"
+	input := "fn(x,y) { x/y; };"
 
 	evalutated := testEval(input)
 	fn, ok := evalutated.(*object.Function)
@@ -231,7 +231,7 @@ func TestFunctionObjet(t *testing.T) {
 		t.Fatalf("got %q, not x", fn.Parameters[0].String())
 	}
 
-	exp := "(x + 2)"
+	exp := "(x / y)"
 	if fn.Body.String() != exp {
 		t.Fatalf("got %s", fn.Body.String())
 	}

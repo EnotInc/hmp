@@ -133,7 +133,7 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 		return evalIfExpression(node, env)
 	}
 
-	return nil
+	return NULL
 }
 
 func evalForStatement(node *ast.ForStatement, env *object.Enviroment) object.Object {
