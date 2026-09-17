@@ -4,6 +4,9 @@ let fib = fn(n) {
 	else { fib(n-1) + fib(n-2) }
 }
 
-let res = fib(12)
 
-print(res)
+print("enter your number:")
+let input = scanln()
+let n = atoi(input)
+
+print(fib(n))

@@ -1,8 +1,9 @@
 let greet = fn(name) {
-	return "Hello, " + name
+	return "Oh! Hello, " + name + "!"
 }
 
-let name = "Enot"
-let res = greet(name)
+print("Type your name: ")
+const name = scanln()
+const res = greet(name)
 
 print(res)
