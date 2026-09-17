@@ -79,10 +79,10 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.ASTERISK, l.ch)
 	case '/':
 		if l.peekChar() == '/' {
-			for l.ch != '\n' && l.ch != 0 {
+			for l.ch != '\n' && l.ch != '\r' && l.ch != 0 {
 				l.readChar()
 			}
-			tok = l.NextToken()
+			return l.NextToken()
 		} else {
 			tok = newToken(token.SLASH, l.ch)
 		}
