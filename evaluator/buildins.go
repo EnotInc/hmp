@@ -311,7 +311,7 @@ func _rand(args ...object.Object) object.Object {
 	if len(args) != 2 {
 		return newError("wrong number of agruments. got %d, want 2", len(args))
 	}
-	if args[0].Type() != object.INTERER_OBJ || args[1].Type() != object.INTERER_OBJ {
+	if args[0].Type() != object.INTEGER_OBJ || args[1].Type() != object.INTEGER_OBJ {
 		return newError("both argument to 'rand' must be INTEGER, got %s", args[0].Type())
 	}
 	min := args[0].(*object.Integer).Value

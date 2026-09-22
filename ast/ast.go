@@ -401,9 +401,10 @@ func (h *HashLiteral) String() string {
 
 // -==[ assignment ]==-
 type AssignExpression struct {
-	Token token.Token
-	Name  Expression
-	Right Expression
+	Token    token.Token
+	Left     Expression
+	Right    Expression
+	Operator string
 }
 
 func (a *AssignExpression) expressionNode()      {}
@@ -411,8 +412,8 @@ func (a *AssignExpression) TokenLiteral() string { return a.Token.Literal }
 func (a *AssignExpression) String() string {
 	var out bytes.Buffer
 
-	out.WriteString(a.Name.String())
-	out.WriteString("=")
+	out.WriteString(a.Left.String())
+	out.WriteString(a.Operator)
 	out.WriteString(a.Right.String())
 
 	return out.String()

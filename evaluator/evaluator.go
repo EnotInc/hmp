@@ -195,11 +195,11 @@ func unwrapReturnvalue(obj object.Object) object.Object {
 
 func evalIndexExpression(left, index object.Object) object.Object {
 	switch {
-	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTERER_OBJ:
+	case left.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ:
 		return evalArrayIdexExpression(left, index)
 	case left.Type() == object.HASH_OBJ:
 		return evalHashIndexExpression(left, index)
-	case left.Type() == object.STRING_OBJ && index.Type() == object.INTERER_OBJ:
+	case left.Type() == object.STRING_OBJ && index.Type() == object.INTEGER_OBJ:
 		str := left.(*object.String)
 		idx := index.(*object.Integer)
 		return &object.String{Value: string(str.Value[idx.Value])}
@@ -289,25 +289,68 @@ func evalHashLiteral(node *ast.HashLiteral, env *object.Enviroment) object.Objec
 	return &object.Hash{Pairs: pairs}
 }
 
+func evalPMAssignExpression(operator string, name string, left, right object.Object, env *object.Enviroment) object.Object {
+	l := left.(*object.Integer)
+	r := right.(*object.Integer)
+	switch operator {
+	case "+=":
+		new := &object.Integer{Value: l.Value + r.Value}
+
+		err := env.Assign(name, new)
+		if isError(err) {
+			return err
+		}
+		return right
+	case "-=":
+		new := &object.Integer{Value: l.Value - r.Value}
+
+		err := env.Assign(name, new)
+		if isError(err) {
+			return err
+		}
+		return right
+
+	}
+	return newError("unknown operator %s", operator)
+}
+
 func evalAssignExpression(node *ast.AssignExpression, env *object.Enviroment) object.Object {
-	val := Eval(node.Right, env)
-	if isError(val) {
-		return val
+	r := Eval(node.Right, env)
+	if isError(r) {
+		return r
 	}
 
-	switch left := node.Name.(type) {
+	switch left := node.Left.(type) {
 	case *ast.Identifier:
 		if env.IsConst(left.Value) {
 			return newError("unable to reassign constants")
 		}
+		switch node.Operator {
+		case "+=", "-=":
+			l := Eval(node.Left, env)
+			if isError(l) {
+				return l
+			}
+			if l.Type() != object.INTEGER_OBJ {
+				return newError("unable to use '%s' operator with '%s' type.", node.Operator, l.Type())
+			}
+			return evalPMAssignExpression(node.Operator, left.Value, l, r, env)
+		case "=":
+			err := env.Assign(left.Value, r)
+			if isError(err) {
+				return err
+			}
+			return r
 
-		err := env.Assign(left.Value, val)
-		if isError(err) {
-			return err
+		default:
+			return newError("unknown operator %s", node.Operator)
 		}
-		return val
 
 	case *ast.IndexExprssion:
+		if node.Operator != "=" {
+			return newError("unknown operator '%s'", node.Operator)
+		}
+
 		l := Eval(left.Left, env)
 		if isError(l) {
 			return l
@@ -322,7 +365,7 @@ func evalAssignExpression(node *ast.AssignExpression, env *object.Enviroment) ob
 			return index
 		}
 
-		res := evalIdexAssignment(l, index, val)
+		res := evalIdexAssignment(l, index, r)
 		if isError(res) {
 			return res
 		}
@@ -333,7 +376,7 @@ func evalAssignExpression(node *ast.AssignExpression, env *object.Enviroment) ob
 		return res
 
 	default:
-		return newError("assign operator is not available to %T", node.Name)
+		return newError("assign operator is not available to %T", node.Left)
 	}
 }
 
@@ -443,7 +486,7 @@ func evalPostfixExpression(operator string, left object.Object) object.Object {
 		l.Value = l.Value - 1
 		return l
 	default:
-		return newError("unknown operator: %s%s", operator, left.Type())
+		return newError("unknown operator: %s %s", operator, left.Type())
 	}
 }
 
@@ -472,7 +515,7 @@ func evalBangOperatorExpression(right object.Object) object.Object {
 }
 
 func evalMinusPrefixOperatorExpression(right object.Object) object.Object {
-	if right.Type() != object.INTERER_OBJ {
+	if right.Type() != object.INTEGER_OBJ {
 		return newError("unknown operator: -%s", right.Type())
 	}
 
@@ -482,7 +525,7 @@ func evalMinusPrefixOperatorExpression(right object.Object) object.Object {
 
 func evalInfixExpression(operator string, left, right object.Object) object.Object {
 	switch {
-	case left.Type() == object.INTERER_OBJ && right.Type() == object.INTERER_OBJ:
+	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
 
 	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:

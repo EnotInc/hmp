@@ -25,21 +25,23 @@ const (
 )
 
 var precedences = map[token.TokenType]int{
-	token.ASSIGN:   ASSIGN,
-	token.EQ:       EQUALS,
-	token.NOT_EQ:   EQUALS,
-	token.OR:       OR,
-	token.AND:      AND,
-	token.LT:       LESSGREATER,
-	token.GT:       LESSGREATER,
-	token.LT_EQ:    LESSGREATER,
-	token.GT_EQ:    LESSGREATER,
-	token.PLUS:     SUM,
-	token.MINUS:    SUM,
-	token.SLASH:    PRODUCT,
-	token.ASTERISK: PRODUCT,
-	token.LPAREN:   CALL,
-	token.LBRACKET: INDEX,
+	token.ASSIGN:       ASSIGN,
+	token.EQ:           EQUALS,
+	token.NOT_EQ:       EQUALS,
+	token.OR:           OR,
+	token.AND:          AND,
+	token.LT:           LESSGREATER,
+	token.GT:           LESSGREATER,
+	token.LT_EQ:        LESSGREATER,
+	token.GT_EQ:        LESSGREATER,
+	token.PLUS:         SUM,
+	token.MINUS:        SUM,
+	token.PLUS_ASSIGN:  SUM,
+	token.MINUS_ASSIGN: SUM,
+	token.SLASH:        PRODUCT,
+	token.ASTERISK:     PRODUCT,
+	token.LPAREN:       CALL,
+	token.LBRACKET:     INDEX,
 }
 
 type (
@@ -107,6 +109,8 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.LPAREN, p.parseCallExpression)
 	p.registerInfix(token.LBRACKET, p.parseIdexExpression)
 	p.registerInfix(token.ASSIGN, p.parseAssignExpression)
+	p.registerInfix(token.PLUS_ASSIGN, p.parseAssignExpression)
+	p.registerInfix(token.MINUS_ASSIGN, p.parseAssignExpression)
 	p.registerInfix(token.OR, p.parseInfixExpression)
 	p.registerInfix(token.AND, p.parseInfixExpression)
 
@@ -437,7 +441,7 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 }
 
 func (p *Parser) parseAssignExpression(left ast.Expression) ast.Expression {
-	exp := &ast.AssignExpression{Token: p.curToken, Name: left}
+	exp := &ast.AssignExpression{Token: p.curToken, Left: left, Operator: p.curToken.Literal}
 	p.nextToken()
 	exp.Right = p.parseExpression(LOWEST)
 	return exp

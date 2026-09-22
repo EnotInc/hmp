@@ -24,8 +24,10 @@ const (
 	ASTERISK = "*"
 	SLASH    = "/"
 
-	INCREMENT = "++"
-	DECREMENT = "--"
+	INCREMENT    = "++"
+	DECREMENT    = "--"
+	PLUS_ASSIGN  = "+="
+	MINUS_ASSIGN = "-="
 
 	LT    = "<"  // Less Then
 	GT    = ">"  // Greater Then
