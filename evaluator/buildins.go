@@ -11,6 +11,7 @@ import (
 
 var buildins = map[string]*object.BuildIn{
 	"atoi": {Fn: _atoi},
+	"itoa": {Fn: _itoa},
 	"len":  {Fn: _len},
 
 	"first": {Fn: _first},
@@ -21,9 +22,10 @@ var buildins = map[string]*object.BuildIn{
 
 	"rand": {Fn: _rand},
 
-	"scanln": {Fn: _scanln},
-	"print":  {Fn: _print},
-	"exit":   {Fn: _exit},
+	"scanln":  {Fn: _scanln},
+	"print":   {Fn: _print},
+	"println": {Fn: _println},
+	"exit":    {Fn: _exit},
 
 	"exists": {Fn: _exists},
 	"create": {Fn: _create},
@@ -150,6 +152,14 @@ func _scanln(args ...object.Object) object.Object {
 }
 
 func _print(args ...object.Object) object.Object {
+	for _, arg := range args {
+		fmt.Print(arg.Inspect())
+	}
+
+	return NULL
+}
+
+func _println(args ...object.Object) object.Object {
 	for _, arg := range args {
 		fmt.Print(arg.Inspect())
 	}
@@ -305,6 +315,18 @@ func _atoi(args ...object.Object) object.Object {
 		return newError("unable to parse string %s", integ.Value)
 	}
 	return &object.Integer{Value: int64(n)}
+}
+
+func _itoa(args ...object.Object) object.Object {
+	if len(args) != 1 {
+		return newError("wrong number of agruments. got %d, want 1", len(args))
+	}
+	integer, ok := args[0].(*object.Integer)
+	if !ok {
+		return newError("argument to 'itoa' must be INTEGER, got %s", args[0].Type())
+	}
+	chrs := fmt.Sprintf("%s", string(integer.Value))
+	return &object.String{Value: chrs}
 }
 
 func _rand(args ...object.Object) object.Object {

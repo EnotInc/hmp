@@ -1,0 +1,65 @@
+const init = fn() {
+	const a = args()
+	if (len(a) != 2) {
+		startREPL()
+
+	} else {
+		const data = readfile(a[1])
+		parse(data)
+	}
+}
+
+const readfile = fn(file) {
+	if (!exists(file)) {
+		exit("file '", file, "' is not exists")
+	}
+	const data = read(file)
+	return data
+}
+
+const startREPL = fn() {
+	let input = ""
+	for (input != "quit") {
+		print("\nREPL for bf interpreter in hmp. Type any bf command:\n>> ")
+		input = scanln()
+		parse(input)
+	}
+}
+
+const parse = fn(data) {
+	let arr = []
+	let i = 0
+	const arrcap = 3000
+	for (i < arrcap) {
+		arr = push(arr, 0)
+		i += 1
+	}
+
+	let loops = []
+
+	let reader = 0;
+	let pointer = 0;
+	for (reader < len(data)) {
+		const ch = data[reader]
+
+		// interpreter
+		if (ch == "+" ) { arr[pointer] = arr[pointer] + 1 }
+		if (ch == "-" ) { arr[pointer] = arr[pointer] - 1 }
+		if (ch == ">" ) { pointer += 1 }
+		if (ch == "<" ) { pointer -= 1 }
+		if (ch == "." ) { print(itoa(arr[pointer])) }
+		if (ch == "," ) {}
+		if (ch == "[" ) { if (arr[pointer]!=0) { loops = push(loops, reader) } }
+		if (ch == "]" ) { if (arr[pointer]==0) { loops = pop(loops) } else { reader = last(loops) } }
+
+		reader += 1;
+
+		// fixing offsets
+		if (arr[pointer] > 255) { arr[pointer] = 0 }
+		if (arr[pointer] < 0) { arr[pointer] = 255 }
+		if (reader < 0) { reader = 0 }
+		if (reader > arrcap) { reader = arrcap }
+	}
+}
+
+init()

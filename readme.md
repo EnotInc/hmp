@@ -165,23 +165,25 @@ for {
 ```
 
 ### Build-in functions
-1. `atoi(<STRING>) <INTEGER>` - Ascii TO Integer, gets string as input and returns integer if parsed successfullly
-2. `len(<ARRAY>|<STRING>) <INTEGER>` - gets array or a string and returns its length
-3. `last(<ARRAY>) OBJ` - returns last element of given array
-4. `tail(<ARRAY>) ARRAY` - returns new array, without first element
-5. `push(<ARRAY>, <OBJ>) <ARRAY>` - returns new array, that combines given one and a new object
-6. `pop(<ARRAY>) <ARRAY>` - returns new array without last element
-7. `rand(<INTEGER>, <INTEGER>) <INTEGER>` - returns random value from min (first arg) and max (last arg)
-8. `scanln() <STRING>` - returns user input from terminal
-9. `print([OBJ])` - prints given list of objects
-10. `exit([OBJ])` - prints given list of objects, and ends the program
-11. `exists(<STRING>) <BOOLEAN>` - checks if entry (file or dir) exists on given path
-12. `create(<STRING>)` - creates file with provided name
-13. `read(<STRING>) <STRING>` - reads given file data and returns it
-14. `write(<STRING>, <STRING>)` - writes given data (2nd arg) on file (1st arg)
-15. `delete(<STRING>)` - deletes entry on provided path
-16. `rename(<STRING>, <STRING>)` - renames entry from old to new one
-17. `args() [<STRING>]` - returns an ARRAY of strings, with provided args on running script (1-st arg is script filename)
+- `atoi(<STRING>) <INTEGER>` - Ascii TO Integer, gets string as input and returns integer if parsed successfullly
+- `itoa(<INTEGER>) <STRING>` - Integer TO Ascii, gets integer as input and returns string if parsed successfullly
+- `len(<ARRAY>|<STRING>) <INTEGER>` - gets array or a string and returns its length
+- `last(<ARRAY>) OBJ` - returns last element of given array
+- `tail(<ARRAY>) ARRAY` - returns new array, without first element
+- `push(<ARRAY>, <OBJ>) <ARRAY>` - returns new array, that combines given one and a new object
+- `pop(<ARRAY>) <ARRAY>` - returns new array without last element
+- `rand(<INTEGER>, <INTEGER>) <INTEGER>` - returns random value from min (first arg) and max (last arg)
+- `scanln() <STRING>` - returns user input from terminal
+- `print([OBJ])` - prints given list of objects
+- `println([OBJ])` - prints given list of objects with "\n" symbol at the end
+- `exit([OBJ])` - prints given list of objects, and ends the program
+- `exists(<STRING>) <BOOLEAN>` - checks if entry (file or dir) exists on given path
+- `create(<STRING>)` - creates file with provided name
+- `read(<STRING>) <STRING>` - reads given file data and returns it
+- `write(<STRING>, <STRING>)` - writes given data (2nd arg) on file (1st arg)
+- `delete(<STRING>)` - deletes entry on provided path
+- `rename(<STRING>, <STRING>)` - renames entry from old to new one
+- `args() [<STRING>]` - returns an ARRAY of strings, with provided args on running script (1-st arg is script filename)
 
 > [!warning]
 > buildin `print()` supports only alphabetic escape sequences (`\n`, `\t`, `\e` etc.).
