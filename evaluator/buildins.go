@@ -325,7 +325,7 @@ func _itoa(args ...object.Object) object.Object {
 	if !ok {
 		return newError("argument to 'itoa' must be INTEGER, got %s", args[0].Type())
 	}
-	chrs := fmt.Sprintf("%s", string(integer.Value))
+	chrs := fmt.Sprintf("%s", string(rune(integer.Value)))
 	return &object.String{Value: chrs}
 }
 

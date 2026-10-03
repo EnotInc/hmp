@@ -125,12 +125,30 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 	case *ast.StringLiteral:
 		return &object.String{Value: node.Value}
 
+	case *ast.TryStatement:
+		return evalTryStatement(node, env)
 	case *ast.ForStatement:
 		return evalForStatement(node, env)
 	case *ast.BlockStatement:
 		return evalBlockStatements(node, env)
 	case *ast.IfExpression:
 		return evalIfExpression(node, env)
+	}
+
+	return NULL
+}
+
+func evalTryStatement(node *ast.TryStatement, env *object.Enviroment) object.Object {
+	benv := object.NewEnclosedEnviroment(env)
+	body := evalBlockStatements(node.Body, benv)
+
+	if isError(body) && node.Consequence != nil {
+		cenv := object.NewEnclosedEnviroment(env)
+
+		cenv.Set(node.ErrorIdent.Value, body)
+		cenv.Const(node.ErrorIdent.Value)
+
+		return evalBlockStatements(node.Consequence, cenv)
 	}
 
 	return NULL

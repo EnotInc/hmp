@@ -442,3 +442,32 @@ func (f *ForStatement) String() string {
 
 	return out.String()
 }
+
+type TryStatement struct {
+	Token       token.Token
+	Body        *BlockStatement
+	ErrorIdent  *Identifier
+	Consequence *BlockStatement // TODO: implement
+}
+
+func (t *TryStatement) statementNode()       {}
+func (t *TryStatement) TokenLiteral() string { return t.Token.Literal }
+func (t *TryStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString("try {")
+	for _, stmt := range t.Body.Statements {
+		out.WriteString(stmt.String())
+	}
+	out.WriteString("}")
+
+	if t.Consequence != nil {
+		out.WriteString("catch(){")
+		for _, stmt := range t.Consequence.Statements {
+			out.WriteString(stmt.String())
+		}
+		out.WriteString("}")
+	}
+
+	return out.String()
+}

@@ -42,6 +42,7 @@ func TestNextToken(t *testing.T) {
 	a || b
 
 	for {}
+	try catch
 	`
 
 	tests := []struct {
@@ -173,6 +174,9 @@ func TestNextToken(t *testing.T) {
 		{token.FOR, "for"},
 		{token.LBRACE, "{"},
 		{token.RBRACE, "}"},
+
+		{token.TRY, "try"},
+		{token.CATCH, "catch"},
 
 		{token.EOF, ""},
 	}

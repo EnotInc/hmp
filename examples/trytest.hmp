@@ -1,0 +1,10 @@
+const test = fn() {
+	try {
+		read("filename")
+	} catch(error) { 
+		print(error)
+	}
+}
+
+
+test()

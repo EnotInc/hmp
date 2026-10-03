@@ -512,3 +512,16 @@ func TestForStatement(t *testing.T) {
 		t.Log(stmt.String())
 	}
 }
+
+func TestTryStatement(t *testing.T) {
+	input := "try { print(1/0) }"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	for _, stmt := range program.Statements {
+		t.Log(stmt.String())
+	}
+}
