@@ -145,7 +145,9 @@ func evalTryStatement(node *ast.TryStatement, env *object.Enviroment) object.Obj
 	if isError(body) && node.Consequence != nil {
 		cenv := object.NewEnclosedEnviroment(env)
 
-		cenv.Set(node.ErrorIdent.Value, body)
+		msg := &object.String{Value: body.Inspect()}
+
+		cenv.Set(node.ErrorIdent.Value, msg)
 		cenv.Const(node.ErrorIdent.Value)
 
 		return evalBlockStatements(node.Consequence, cenv)

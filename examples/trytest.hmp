@@ -6,5 +6,11 @@ const test = fn() {
 	}
 }
 
+const testnew = fn() {
+	try {
+		read("newfile")
+	}
+}
 
 test()
+testnew()

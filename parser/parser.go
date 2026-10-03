@@ -209,12 +209,7 @@ func (p *Parser) parseTryStatement() *ast.TryStatement {
 		return nil
 	}
 
-	body := p.parseBlockStatement() // try block
-	if !p.curTokenIs(token.RBRACE) {
-		p.curError(token.RBRACE)
-		return nil
-	}
-	stmt.Body = body
+	stmt.Body = p.parseBlockStatement() // try block
 
 	if p.peekTokenIs(token.CATCH) { // catch block
 		p.nextToken()
@@ -222,8 +217,10 @@ func (p *Parser) parseTryStatement() *ast.TryStatement {
 		if !p.expectPeek(token.LPAREN) {
 			return nil
 		}
+		if !p.expectPeek(token.IDENT) {
+			return nil
+		}
 
-		p.nextToken() // reading lparen
 		stmt.ErrorIdent = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
 		if !p.expectPeek(token.RPAREN) {
@@ -234,13 +231,7 @@ func (p *Parser) parseTryStatement() *ast.TryStatement {
 			return nil
 		}
 
-		cons := p.parseBlockStatement() // body
-		if !p.curTokenIs(token.RBRACE) {
-			p.curError(token.RBRACE)
-			return nil
-		}
-
-		stmt.Consequence = cons
+		stmt.Consequence = p.parseBlockStatement() // body
 	}
 
 	return stmt
@@ -454,10 +445,6 @@ func (p *Parser) parseFuntionLiteral() ast.Expression {
 	}
 
 	lit.Body = p.parseBlockStatement()
-	if !p.curTokenIs(token.RBRACE) {
-		p.curError(token.RBRACE)
-		return nil
-	}
 
 	return lit
 }
@@ -624,11 +611,6 @@ func (p *Parser) noPrefixParseFnError(t token.TokenType) {
 
 func (p *Parser) peekError(t token.TokenType) {
 	err := fmt.Sprintf("expected next token to be: %s, but got %s instead", t, p.peekToken.Type)
-	p.errors = append(p.errors, err)
-}
-
-func (p *Parser) curError(t token.TokenType) {
-	err := fmt.Sprintf("expected next token to be: %s, but got %s instead", t, p.curToken.Type)
 	p.errors = append(p.errors, err)
 }
 
