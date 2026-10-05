@@ -205,9 +205,6 @@ func evalForRangeStatement(node *ast.ForRangeStatement, env *object.Enviroment) 
 	bint := begin.(*object.Integer).Value
 	eint := end.(*object.Integer).Value
 
-	iter := node.Iterator.Value
-	env.Set(iter, &object.Integer{Value: bint})
-
 	if bint == eint {
 		body := evalBlockStatements(node.Body, env)
 		if isError(body) {
@@ -221,19 +218,17 @@ func evalForRangeStatement(node *ast.ForRangeStatement, env *object.Enviroment) 
 		change = -1
 	}
 
+	iteration := bint
+	ident := node.Iterator.Value
+
 	for {
 		loopenv := object.NewEnclosedEnviroment(env)
-		iteration, ok := loopenv.Get(iter)
-		if !ok { // this should never be true
-			return newError("lost iterator [%s]", iter)
-		}
+		loopenv.Set(ident, &object.Integer{Value: iteration})
 
-		iValue := iteration.(*object.Integer).Value
-
-		if iValue >= eint && change == 1 {
+		if iteration >= eint && change == 1 {
 			return NULL
 		}
-		if iValue <= eint && change == -1 {
+		if iteration <= eint && change == -1 {
 			return NULL
 		}
 
@@ -249,7 +244,7 @@ func evalForRangeStatement(node *ast.ForRangeStatement, env *object.Enviroment) 
 			return NULL
 		}
 
-		loopenv.Assign(iter, &object.Integer{Value: iValue + change})
+		iteration += 1
 	}
 }
 
