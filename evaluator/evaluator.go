@@ -7,10 +7,17 @@ import (
 	"github.com/enotinc/hmp/object"
 )
 
+var ( // Runtime Errors
+	UnexpectedBreak    = newError("unexpected 'break' keyword")
+	UnexpectedContinue = newError("unexpected 'continue' keyword")
+)
+
 var (
-	NULL  = &object.Null{}
-	TRUE  = &object.Boolean{Value: true}
-	FALSE = &object.Boolean{Value: false}
+	NULL     = &object.Null{}
+	BREAK    = &object.Break{}
+	CONTINUE = &object.Continue{}
+	TRUE     = &object.Boolean{Value: true}
+	FALSE    = &object.Boolean{Value: false}
 )
 
 func nativeBoolToBooleanObj(input bool) *object.Boolean {
@@ -129,6 +136,10 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 		return evalTryStatement(node, env)
 	case *ast.ForStatement:
 		return evalForStatement(node, env)
+	case *ast.BreakStatement:
+		return BREAK
+	case *ast.ContinueStatement:
+		return CONTINUE
 	case *ast.ForRangeStatement:
 		return evalForRangeStatement(node, env)
 	case *ast.BlockStatement:
@@ -144,6 +155,13 @@ func evalTryStatement(node *ast.TryStatement, env *object.Enviroment) object.Obj
 	benv := object.NewEnclosedEnviroment(env)
 	body := evalBlockStatements(node.Body, benv)
 
+	switch body.Type() {
+	case object.BREAK_OBJ:
+		return UnexpectedBreak
+	case object.CONTINUE_OBJ:
+		return UnexpectedContinue
+	}
+
 	if isError(body) && node.Consequence != nil {
 		cenv := object.NewEnclosedEnviroment(env)
 
@@ -152,7 +170,16 @@ func evalTryStatement(node *ast.TryStatement, env *object.Enviroment) object.Obj
 		cenv.Set(node.ErrorIdent.Value, msg)
 		cenv.Const(node.ErrorIdent.Value)
 
-		return evalBlockStatements(node.Consequence, cenv)
+		res := evalBlockStatements(node.Consequence, cenv)
+
+		switch res.Type() {
+		case object.BREAK_OBJ:
+			return UnexpectedBreak
+		case object.CONTINUE_OBJ:
+			return UnexpectedContinue
+		default:
+			return res
+		}
 	}
 
 	return NULL
@@ -178,13 +205,11 @@ func evalForRangeStatement(node *ast.ForRangeStatement, env *object.Enviroment) 
 	bint := begin.(*object.Integer).Value
 	eint := end.(*object.Integer).Value
 
-	loopenv := object.NewEnclosedEnviroment(env)
-
 	iter := node.Iterator.Value
-	loopenv.Set(iter, begin)
+	env.Set(iter, &object.Integer{Value: bint})
 
 	if bint == eint {
-		body := evalBlockStatements(node.Body, loopenv)
+		body := evalBlockStatements(node.Body, env)
 		if isError(body) {
 			return body
 		}
@@ -197,19 +222,31 @@ func evalForRangeStatement(node *ast.ForRangeStatement, env *object.Enviroment) 
 	}
 
 	for {
+		loopenv := object.NewEnclosedEnviroment(env)
 		iteration, ok := loopenv.Get(iter)
 		if !ok { // this should never be true
 			return newError("lost iterator [%s]", iter)
 		}
 
 		iValue := iteration.(*object.Integer).Value
-		if iValue == eint {
+
+		if iValue >= eint && change == 1 {
+			return NULL
+		}
+		if iValue <= eint && change == -1 {
 			return NULL
 		}
 
 		body := evalBlockStatements(node.Body, loopenv)
 		if isError(body) {
 			return body
+		}
+
+		if body.Type() == object.RETURN_VALUE_OBJ {
+			return body
+		}
+		if body.Type() == object.BREAK_OBJ {
+			return NULL
 		}
 
 		loopenv.Assign(iter, &object.Integer{Value: iValue + change})
@@ -219,20 +256,23 @@ func evalForRangeStatement(node *ast.ForRangeStatement, env *object.Enviroment) 
 func evalForStatement(node *ast.ForStatement, env *object.Enviroment) object.Object {
 	switch node.Condition.(type) {
 	case *ast.InfixExpression, *ast.Boolean, *ast.Identifier:
-		loopEnv := object.NewEnclosedEnviroment(env)
 
 		for {
+			loopEnv := object.NewEnclosedEnviroment(env)
 			cond := Eval(node.Condition, loopEnv)
 			if isError(cond) {
 				return cond
 			}
 
-			if !isTruthy(cond) {
+			if cond.Type() == object.BREAK_OBJ || !isTruthy(cond) {
 				return NULL
 			}
 
 			body := evalBlockStatements(node.Body, loopEnv)
 			if isError(body) {
+				return body
+			}
+			if body.Type() == object.RETURN_VALUE_OBJ {
 				return body
 			}
 		}
@@ -270,7 +310,14 @@ func unwrapReturnvalue(obj object.Object) object.Object {
 		return returnValue.Value
 	}
 
-	return obj
+	switch obj.Type() {
+	case object.BREAK_OBJ:
+		return UnexpectedBreak
+	case object.CONTINUE_OBJ:
+		return UnexpectedContinue
+	default:
+		return obj
+	}
 }
 
 func evalIndexExpression(left, index object.Object) object.Object {
@@ -335,6 +382,10 @@ func evalProgram(program *ast.Program, env *object.Enviroment) object.Object {
 		switch res := res.(type) {
 		case *object.ReturnValue:
 			return res.Value
+		case *object.Break:
+			return UnexpectedBreak
+		case *object.Continue:
+			return UnexpectedContinue
 		case *object.Error:
 			return res
 		}
@@ -544,7 +595,10 @@ func evalBlockStatements(block *ast.BlockStatement, env *object.Enviroment) obje
 
 		if result != nil {
 			rt := result.Type()
-			if rt == object.RETURN_VALUE_OBJ || rt == object.ERROR_OBJ {
+			if rt == object.RETURN_VALUE_OBJ ||
+				rt == object.ERROR_OBJ ||
+				rt == object.CONTINUE_OBJ ||
+				rt == object.BREAK_OBJ {
 				return result
 			}
 		}

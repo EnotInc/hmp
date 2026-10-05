@@ -62,6 +62,8 @@ const (
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
 	FOR      = "FOR"
+	BREAK    = "BREAK"
+	CONTINUE = "CONTINUE"
 	RANGE    = "RANGE"
 	DOTDOT   = ".."
 	TRY      = "TRY"
@@ -69,18 +71,20 @@ const (
 )
 
 var keywords = map[string]TokenType{
-	"fn":     FUNCTION,
-	"let":    LET,
-	"const":  CONST,
-	"if":     IF,
-	"else":   ELSE,
-	"true":   TRUE,
-	"false":  FALSE,
-	"return": RETURN,
-	"for":    FOR,
-	"range":  RANGE,
-	"try":    TRY,
-	"catch":  CATCH,
+	"fn":       FUNCTION,
+	"let":      LET,
+	"const":    CONST,
+	"if":       IF,
+	"else":     ELSE,
+	"true":     TRUE,
+	"false":    FALSE,
+	"return":   RETURN,
+	"for":      FOR,
+	"break":    BREAK,
+	"continue": CONTINUE,
+	"range":    RANGE,
+	"try":      TRY,
+	"catch":    CATCH,
 }
 
 func LookupIdent(ident string) TokenType {

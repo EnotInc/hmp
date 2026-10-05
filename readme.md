@@ -171,6 +171,9 @@ for (range i 0..5) {
 } // last value is not included!
 ```
 
+You can also iterate backwards! `for (range i 5..0)`
+And if you need to break out of the loop or skip one iteration you can use `break` and `continue` keywords.
+
 #### Error Handling
 You know what? F@CK try-catch! But here it is:
 ```js

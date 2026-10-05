@@ -443,6 +443,22 @@ func (f *ForStatement) String() string {
 	return out.String()
 }
 
+type BreakStatement struct {
+	Token token.Token
+}
+
+func (b *BreakStatement) statementNode()       {}
+func (b *BreakStatement) TokenLiteral() string { return b.Token.Literal }
+func (b *BreakStatement) String() string       { return b.Token.Literal }
+
+type ContinueStatement struct {
+	Token token.Token
+}
+
+func (c *ContinueStatement) statementNode()       {}
+func (c *ContinueStatement) TokenLiteral() string { return c.Token.Literal }
+func (c *ContinueStatement) String() string       { return c.Token.Literal }
+
 type TryStatement struct {
 	Token       token.Token
 	Body        *BlockStatement

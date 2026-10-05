@@ -44,7 +44,7 @@ func TestNextToken(t *testing.T) {
 	for {}
 	try catch
 
-	for (i = range 0..5) {}
+	for (i = range 0..5) { break }
 	`
 
 	tests := []struct {
@@ -191,6 +191,7 @@ func TestNextToken(t *testing.T) {
 		{token.RPAREN, ")"},
 
 		{token.LBRACE, "{"},
+		{token.BREAK, "break"},
 		{token.RBRACE, "}"},
 
 		{token.EOF, ""},

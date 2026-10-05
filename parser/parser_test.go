@@ -501,7 +501,7 @@ func TestParsingAssignment(t *testing.T) {
 }
 
 func TestForStatement(t *testing.T) {
-	input := "for (1 != 2) { print(2) }\nfor (range i 0..5) {}"
+	input := "for (1 != 2) { print(2) }\nfor (range i 0..5) { if (i == 2) { break; } }"
 
 	l := lexer.New(input)
 	p := New(l)

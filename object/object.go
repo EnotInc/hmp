@@ -19,6 +19,8 @@ const (
 	INTEGER_OBJ  = "INTEGER"
 	BOOLEAN_OBJ  = "BOOLEAN"
 	NULL_OBJ     = "NULL"
+	BREAK_OBJ    = "BREAK"
+	CONTINUE_OBJ = "CONTINUE"
 	STRING_OBJ   = "STRING"
 	ARRAY_OBJ    = "ARRAY"
 	HASH_OBJ     = "HASH"
@@ -62,6 +64,17 @@ type ReturnValue struct {
 
 func (r *ReturnValue) Type() ObjectType { return RETURN_VALUE_OBJ }
 func (r *ReturnValue) Inspect() string  { return r.Value.Inspect() }
+
+// -==[ break and continue ]==-
+type Break struct{}
+
+func (b *Break) Type() ObjectType { return BREAK_OBJ }
+func (b *Break) Inspect() string  { return "break" }
+
+type Continue struct{}
+
+func (c *Continue) Type() ObjectType { return CONTINUE_OBJ }
+func (c *Continue) Inspect() string  { return "continue" }
 
 // -==[ ERRORS !]==-
 type Error struct {
