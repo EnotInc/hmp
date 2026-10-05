@@ -1,12 +1,11 @@
-
 let fib = fn(n) {
 	if (n<=1) { n }
 	else { fib(n-1) + fib(n-2) }
 }
 
 
-print("enter your number:")
+println("enter your number:")
 let input = scanln()
 let n = atoi(input)
 
-print(fib(n))
+println(fib(n))

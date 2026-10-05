@@ -37,6 +37,12 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	// operators
+	case '.':
+		if l.peekChar() == '.' {
+			l.readChar()
+			tok.Type = token.DOTDOT
+			tok.Literal = ".."
+		}
 	case '=':
 		if l.peekChar() == '=' {
 			ch := l.ch
@@ -238,7 +244,7 @@ func (l *Lexer) readString() string {
 
 func (l *Lexer) readIdent() string {
 	pos := l.position
-	for isLetter(l.ch) {
+	for isLetter(l.ch) || isDigin(l.ch) {
 		l.readChar()
 	}
 	return l.input[pos:l.position]

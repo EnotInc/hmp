@@ -157,11 +157,18 @@ In hmp there are no 'while' loops, only 'for' loops
 for (cond) {}
 ```
 
-if you want to run your loop forever, you can do this:
+If you want to run your loop forever, you can do this:
 ```js
 for {
 	// this will run forever
 }
+```
+
+You can also use inline range iterator with 'range' keyword
+```js
+for (range i 0..5) {
+	print(i) // -> 01234
+} // last value is not included!
 ```
 
 #### Error Handling

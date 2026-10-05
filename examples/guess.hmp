@@ -14,12 +14,15 @@ let guess = fn(x) {
 
 let input = ""
 let n = -1
-print("Let's guess some values! Range is: 0 - 100")
-print("type your first number: ")
+println("Let's guess some values! Range is: 0 - 100")
+print("type your first number:\n > ")
 for (n != val) {
 	input = scanln()
-	n = atoi(input)
-
-	const res = guess(n)
-	print(res)
+	try {
+		n = atoi(input)
+		const res = guess(n)
+		print(res, "\n > ")
+	} catch(_) {
+		print("'", input, "' is not a number! Try one more time\n > ")
+	}
 }

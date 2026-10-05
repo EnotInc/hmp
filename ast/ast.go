@@ -447,7 +447,7 @@ type TryStatement struct {
 	Token       token.Token
 	Body        *BlockStatement
 	ErrorIdent  *Identifier
-	Consequence *BlockStatement // TODO: implement
+	Consequence *BlockStatement
 }
 
 func (t *TryStatement) statementNode()       {}
@@ -469,5 +469,29 @@ func (t *TryStatement) String() string {
 		out.WriteString("}")
 	}
 
+	return out.String()
+}
+
+type ForRangeStatement struct {
+	Token    token.Token
+	Iterator *Identifier
+	Begin    Expression
+	End      Expression
+	Body     *BlockStatement
+}
+
+func (fr *ForRangeStatement) statementNode()       {}
+func (fr *ForRangeStatement) TokenLiteral() string { return fr.Token.Literal }
+func (fr *ForRangeStatement) String() string {
+	var out bytes.Buffer
+	out.WriteString("for(")
+	out.WriteString(fr.Iterator.String())
+	out.WriteString(" = ")
+	out.WriteString(fr.Begin.String())
+	out.WriteString("..")
+	out.WriteString(fr.End.String())
+	out.WriteString(") {")
+	out.WriteString(fr.Body.String())
+	out.WriteString("}")
 	return out.String()
 }

@@ -43,6 +43,8 @@ func TestNextToken(t *testing.T) {
 
 	for {}
 	try catch
+
+	for (i = range 0..5) {}
 	`
 
 	tests := []struct {
@@ -177,6 +179,19 @@ func TestNextToken(t *testing.T) {
 
 		{token.TRY, "try"},
 		{token.CATCH, "catch"},
+
+		{token.FOR, "for"},
+		{token.LPAREN, "("},
+		{token.IDENT, "i"},
+		{token.ASSIGN, "="},
+		{token.RANGE, "range"},
+		{token.INT, "0"},
+		{token.DOTDOT, ".."},
+		{token.INT, "5"},
+		{token.RPAREN, ")"},
+
+		{token.LBRACE, "{"},
+		{token.RBRACE, "}"},
 
 		{token.EOF, ""},
 	}

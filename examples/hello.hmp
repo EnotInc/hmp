@@ -6,4 +6,4 @@ print("Type your name: ")
 const name = scanln()
 const res = greet(name)
 
-print(res)
+println(res)

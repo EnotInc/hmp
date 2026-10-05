@@ -308,7 +308,7 @@ func TestArrayLiteral(t *testing.T) {
 }
 
 func TestForStatement(t *testing.T) {
-	input := "let a = 4; for (a != 0) { print(a); a--; if (a==2) { break } }"
+	input := "let a = 4; for (a != 0) { print(a); a--; if (a==2) } for (range i 0..5) { print(i); }"
 
 	evaluated := testEval(input)
 	t.Log(evaluated.Inspect())

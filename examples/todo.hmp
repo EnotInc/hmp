@@ -12,10 +12,9 @@ let init = fn() { // creating file if not exists, reading it and returning the p
 }
 
 let _parse = fn(data) {
-	let i = 0
 	let line = ""
 	// each task is separated by ';' symbol
-	for (i < len(data)) {
+	for (range i 0..len(data)) {
 		let ch = data[i]
 		if (ch == ";") { // if we found separator - push line to the tasks list, and clrear line
 			tasks = push(tasks, line)
@@ -23,15 +22,13 @@ let _parse = fn(data) {
 		} else { // else append ch to line
 			line = line + ch
 		}
-		i = i+1
 	}
 }
 
 let _save = fn() {
 	let output = ""
-	let i = 0
 	// appending each task to output
-	for (i < len(tasks)) {
+	for (range i 0..len(tasks)) {
 		const data = tasks[i]
 		if (len(data) != 0) {
 			output = output + data + ";" // adding separator symbol at the end
@@ -47,10 +44,8 @@ let list = fn() {
 	const yellow = "\e[33m"
 	const cyan = "\e[34m"
 
-	let i = 0 // printing all tasks
-	for (i < len(tasks)) {
-		print(yellow, i, " ", cyan, tasks[i], reset)
-		i++
+	for (range i 0..len(tasks)) {
+		println(yellow, i, " ", cyan, tasks[i], reset)
 	}
 }
 
@@ -68,7 +63,7 @@ let main = fn() {
 		if (cmd == "remove" || cmd == "complete") {
 			const n = atoi(param)
 			if (n<0 || n>=len(tasks)) {
-				print("incorrect index ", n)
+				println("incorrect index ", n)
 			} else {
 				tasks[n] = ""
 			}

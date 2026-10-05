@@ -129,6 +129,8 @@ func Eval(node ast.Node, env *object.Enviroment) object.Object {
 		return evalTryStatement(node, env)
 	case *ast.ForStatement:
 		return evalForStatement(node, env)
+	case *ast.ForRangeStatement:
+		return evalForRangeStatement(node, env)
 	case *ast.BlockStatement:
 		return evalBlockStatements(node, env)
 	case *ast.IfExpression:
@@ -154,6 +156,55 @@ func evalTryStatement(node *ast.TryStatement, env *object.Enviroment) object.Obj
 	}
 
 	return NULL
+}
+
+func evalForRangeStatement(node *ast.ForRangeStatement, env *object.Enviroment) object.Object {
+	begin := Eval(node.Begin, env)
+	if isError(begin) {
+		return begin
+	}
+	if begin.Type() != object.INTEGER_OBJ {
+		return newError("range bounds must be INTEGERS, got %s", begin.Type())
+	}
+
+	end := Eval(node.End, env)
+	if isError(end) {
+		return end
+	}
+	if end.Type() != object.INTEGER_OBJ {
+		return newError("range bounds must be INTEGERS, got %s", end.Type())
+	}
+
+	bint := begin.(*object.Integer).Value
+	eint := end.(*object.Integer).Value
+
+	if bint > eint { // TODO: implement backwards loop
+		return newError("range can't iterate backwards. Begin: %d\tEnd %d", bint, eint)
+	}
+
+	loopenv := object.NewEnclosedEnviroment(env)
+
+	iter := node.Iterator.Value
+	loopenv.Set(iter, begin)
+
+	for {
+		iteration, ok := loopenv.Get(iter)
+		if !ok { // this should never be true
+			return newError("lost iterator [%s]", iter)
+		}
+
+		iValue := iteration.(*object.Integer).Value
+		if iValue >= eint {
+			return NULL
+		}
+
+		body := evalBlockStatements(node.Body, loopenv)
+		if isError(body) {
+			return body
+		}
+
+		loopenv.Assign(iter, &object.Integer{Value: iValue + 1})
+	}
 }
 
 func evalForStatement(node *ast.ForStatement, env *object.Enviroment) object.Object {

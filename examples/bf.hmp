@@ -1,4 +1,4 @@
-const init = fn() {
+const main = fn() {
 	const a = args()
 	if (len(a) != 2) {
 		startREPL()
@@ -28,16 +28,16 @@ const startREPL = fn() {
 
 const parse = fn(data) {
 	let arr = []
-	let i = 0
 	const arrcap = 3000
-	for (i < arrcap) {
+	for (range i 0..arrcap) {
 		arr = push(arr, 0)
-		i += 1
 	}
 
 	let loops = []
 
+	// reader is initialized out of 'for' loop coz it can be changed not linear
 	let reader = 0;
+
 	let pointer = 0;
 	for (reader < len(data)) {
 		const ch = data[reader]
@@ -62,4 +62,4 @@ const parse = fn(data) {
 	}
 }
 
-init()
+main()

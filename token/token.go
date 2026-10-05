@@ -62,6 +62,8 @@ const (
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
 	FOR      = "FOR"
+	RANGE    = "RANGE"
+	DOTDOT   = ".."
 	TRY      = "TRY"
 	CATCH    = "CATCH"
 )
@@ -76,6 +78,7 @@ var keywords = map[string]TokenType{
 	"false":  FALSE,
 	"return": RETURN,
 	"for":    FOR,
+	"range":  RANGE,
 	"try":    TRY,
 	"catch":  CATCH,
 }

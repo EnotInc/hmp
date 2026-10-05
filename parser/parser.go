@@ -10,7 +10,9 @@ import (
 )
 
 const (
-	_ int = iota
+	_      int = iota
+	DOTDOT     // NOTE: should stayed lowest to not be parsed at for range loops
+
 	LOWEST
 	ASSIGN // a = 5;
 	OR
@@ -237,18 +239,69 @@ func (p *Parser) parseTryStatement() *ast.TryStatement {
 	return stmt
 }
 
-func (p *Parser) parseForStatement() *ast.ForStatement {
-	stmt := &ast.ForStatement{Token: p.curToken}
+func (p *Parser) parseForStatement() ast.Statement {
+	if p.peekTokenIs(token.LBRACE) { // is there is no LPAREN -> parse as infinite loop
+		stmt := &ast.ForStatement{Token: p.curToken}
 
-	var cond ast.Expression = &ast.Boolean{Value: true} // setting condition to be true by default (for {} = while true)
-	if p.peekTokenIs(token.LPAREN) {                    // if we found condition - parse it. (for (cond) {} = while cond )
 		p.nextToken()
-		cond = p.parseExpression(LOWEST)
+		body := p.parseBlockStatement()
 
-		if !p.curTokenIs(token.RPAREN) {
-			return nil
-		}
+		stmt.Token = p.curToken
+		stmt.Condition = &ast.Boolean{Value: true}
+		stmt.Body = body
+
+		return stmt
 	}
+
+	t := p.curToken
+	if !p.expectPeek(token.LPAREN) {
+		return nil
+	}
+
+	if p.peekTokenIs(token.RANGE) {
+		return p.parseForRangeStatement(t)
+	} else {
+		return p.parseForExpStatement(t)
+	}
+}
+
+func (p *Parser) parseForRangeStatement(t token.Token) *ast.ForRangeStatement {
+	stmt := &ast.ForRangeStatement{Token: t}
+	p.nextToken() // reading 'range' keyword
+	p.nextToken() // reading identifier
+
+	ident := &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
+	p.nextToken()
+
+	begin := p.parseExpression(LOWEST)
+	if !p.expectPeek(token.DOTDOT) {
+		return nil
+	}
+	p.nextToken()
+
+	end := p.parseExpression(LOWEST)
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+	if !p.expectPeek(token.LBRACE) {
+		return nil
+	}
+
+	body := p.parseBlockStatement()
+
+	stmt.Iterator = ident
+	stmt.Begin = begin
+	stmt.End = end
+	stmt.Body = body
+
+	return stmt
+}
+
+func (p *Parser) parseForExpStatement(t token.Token) *ast.ForStatement {
+	stmt := &ast.ForStatement{Token: t}
+	var cond ast.Expression
+
+	cond = p.parseExpression(LOWEST)
 
 	if !p.expectPeek(token.LBRACE) {
 		return nil
