@@ -178,14 +178,23 @@ func evalForRangeStatement(node *ast.ForRangeStatement, env *object.Enviroment) 
 	bint := begin.(*object.Integer).Value
 	eint := end.(*object.Integer).Value
 
-	if bint > eint { // TODO: implement backwards loop
-		return newError("range can't iterate backwards. Begin: %d\tEnd %d", bint, eint)
-	}
-
 	loopenv := object.NewEnclosedEnviroment(env)
 
 	iter := node.Iterator.Value
 	loopenv.Set(iter, begin)
+
+	if bint == eint {
+		body := evalBlockStatements(node.Body, loopenv)
+		if isError(body) {
+			return body
+		}
+		return NULL
+	}
+
+	var change int64 = 1
+	if bint > eint {
+		change = -1
+	}
 
 	for {
 		iteration, ok := loopenv.Get(iter)
@@ -194,7 +203,7 @@ func evalForRangeStatement(node *ast.ForRangeStatement, env *object.Enviroment) 
 		}
 
 		iValue := iteration.(*object.Integer).Value
-		if iValue >= eint {
+		if iValue == eint {
 			return NULL
 		}
 
@@ -203,7 +212,7 @@ func evalForRangeStatement(node *ast.ForRangeStatement, env *object.Enviroment) 
 			return body
 		}
 
-		loopenv.Assign(iter, &object.Integer{Value: iValue + 1})
+		loopenv.Assign(iter, &object.Integer{Value: iValue + change})
 	}
 }
 
