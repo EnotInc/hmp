@@ -147,8 +147,8 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 
 	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
 	if err != nil {
-		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
-		p.errors = append(p.errors, msg)
+		err := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
+		p.newError(err)
 		return nil
 	}
 
@@ -161,6 +161,11 @@ func (p *Parser) parseIntegerLiteral() ast.Expression {
 	}
 
 	return lit
+}
+
+func (p *Parser) newError(msg string) {
+	line := fmt.Sprintf("%d:%d %s", p.l.Line, p.l.Offset, msg)
+	p.errors = append(p.errors, line)
 }
 
 func (p *Parser) Errors() []string {
@@ -659,12 +664,12 @@ func (p *Parser) peekTokenIs(t token.TokenType) bool {
 
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {
 	err := fmt.Sprintf("no prefix parse function for %s found", t)
-	p.errors = append(p.errors, err)
+	p.newError(err)
 }
 
 func (p *Parser) peekError(t token.TokenType) {
 	err := fmt.Sprintf("expected next token to be: %s, but got %s instead", t, p.peekToken.Type)
-	p.errors = append(p.errors, err)
+	p.newError(err)
 }
 
 func (p *Parser) expectPeek(t token.TokenType) bool {

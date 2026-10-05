@@ -14,11 +14,13 @@ func main() {
 	args := os.Args
 	if len(args) == 1 {
 		repl.Start(os.Stdin, os.Stdout)
+		return
 	}
 
 	input, err := readFrom(args)
 	if err != nil {
-		panic(err)
+		fmt.Print(err)
+		return
 	}
 
 	env := object.NewEnviroment()
